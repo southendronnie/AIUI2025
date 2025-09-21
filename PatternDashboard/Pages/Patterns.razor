@@ -1,0 +1,29 @@
+@page "/Patterns"
+@inject PatternLab.Services.PatternService PatternService
+
+<h3>Pattern Summary</h3>
+
+<button class="btn btn-primary" @onclick="RunTest">Run Test</button>
+
+@if (summary != null)
+{
+    <table class="table mt-3">
+        <thead><tr><th>Direction</th><th>Count</th></tr></thead>
+        <tbody>
+            @foreach (var item in summary)
+            {
+                <tr><td>@item.Direction</td><td>@item.Count</td></tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<(string Direction, int Count)>? summary;
+
+    void RunTest()
+    {
+        decimal[] prices = { 1.1000m, 1.1005m, 1.1003m, 1.1008m, 1.1006m, 1.1010m, 1.1007m };
+        summary = PatternService.GetSummary(prices, windowSize: 4);
+    }
+}
