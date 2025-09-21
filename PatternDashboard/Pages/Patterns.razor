@@ -1,29 +1,38 @@
-@page "/Patterns"
-@inject PatternLab.Services.PatternService PatternService
+@inject MarketDataService MarketData
+@inject PatternService PatternService
 
-<h3>Pattern Summary</h3>
+<h3>Detected Patterns</h3>
 
-<button class="btn btn-primary" @onclick="RunTest">Run Test</button>
-
-@if (summary != null)
+@if (hits == null)
 {
-    <table class="table mt-3">
-        <thead><tr><th>Direction</th><th>Count</th></tr></thead>
-        <tbody>
-            @foreach (var item in summary)
-            {
-                <tr><td>@item.Direction</td><td>@item.Count</td></tr>
-            }
-        </tbody>
-    </table>
+    <p>Loading patterns...</p>
+}
+else if (hits.Count == 0)
+{
+    <p>No patterns detected.</p>
+}
+else
+{
+    <ul>
+        @foreach (var hit in hits)
+        {
+            <li>
+                <strong>@hit.Type</strong> @hit.Time.ToString("HH:mm") — Confidence: @hit.Confidence.ToString("P0")
+            </li>
+        }
+    </ul>
+
+    <p class="summary">@summary</p>
 }
 
 @code {
-    private IEnumerable<(string Direction, int Count)>? summary;
+    private List<PatternHit> hits;
+    private string summary;
 
-    void RunTest()
+    protected override async Task OnInitializedAsync()
     {
-        decimal[] prices = { 1.1000m, 1.1005m, 1.1003m, 1.1008m, 1.1006m, 1.1010m, 1.1007m };
-        summary = PatternService.GetSummary(prices, windowSize: 4);
+        var candles = await MarketData.GetCandlesAsync();
+        hits = PatternService.ExtractPatterns(candles);
+        summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
     }
 }

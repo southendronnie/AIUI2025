@@ -1,23 +1,69 @@
-﻿using PatternDashboard.Models;
-using PatternDashboard.Stats;
-using PatternLab.Extractors;
 
-namespace PatternLab.Services
-{
   public class PatternService
   {
-    public IEnumerable<PricePattern> GetPatterns(decimal[] prices, int windowSize = 4)
+    public List<PatternHit> ExtractPatterns(List<Candle> candles)
     {
-      return PatternExtractor.Extract(prices, windowSize).ToList();
+      var hits = new List<PatternHit>();
+
+      for (int i = 1; i < candles.Count; i++)
+      {
+        var prev = candles[i - 1];
+        var current = candles[i];
+
+        if (prev.Close < prev.Open && current.Close > current.Open &&
+            current.Open < prev.Close && current.Close > prev.Open)
+        {
+          hits.Add(new PatternHit
+          {
+            Time = current.Time,
+            Type = "Bullish Engulfing",
+            Confidence = 0.85
+          });
+        }
+
+        if (prev.Close > prev.Open && current.Close < current.Open &&
+            current.Open > prev.Close && current.Close < prev.Open)
+        {
+          hits.Add(new PatternHit
+          {
+            Time = current.Time,
+            Type = "Bearish Engulfing",
+            Confidence = 0.85
+          });
+        }
+      }
+
+      return hits;
     }
 
-    public IEnumerable<(string Direction, int Count)> GetSummary(decimal[] prices, int windowSize = 4)
+    public string GetSummary(List<PatternHit> hits)
     {
-      var stats = new PatternStats();
-      foreach (var pattern in PatternExtractor.Extract(prices, windowSize))
-        stats.Add(pattern);
+      if (hits == null || hits.Count == 0)
+        return "No patterns detected.";
 
-      return stats.Summarize();
+      var grouped = hits
+          .GroupBy(h => h.Type)
+          .Select(g => $"{g.Key}: {g.Count()} hits")
+          .ToList();
+
+      return $"Detected Patterns:\n" + string.Join("\n", grouped);
     }
+  public string GetSummary(List<PatternHit> hits, TimeSpan windowSize)
+  {
+    if (hits == null || hits.Count == 0)
+      return "No patterns detected.";
+
+    var cutoff = DateTime.UtcNow - windowSize;
+    var recentHits = hits.Where(h => h.Time >= cutoff).ToList();
+
+    if (recentHits.Count == 0)
+      return $"No patterns detected in the last {windowSize.TotalMinutes} minutes.";
+
+    var grouped = recentHits
+        .GroupBy(h => h.Type)
+        .Select(g => $"{g.Key}: {g.Count()} hits")
+        .ToList();
+
+    return $"Recent Patterns:\n" + string.Join("\n", grouped);
   }
 }
