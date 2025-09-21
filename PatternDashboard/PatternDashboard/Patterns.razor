@@ -1,4 +1,4 @@
-@using AIUI2025.Services
+﻿@using AIUI2025.Services
 @inject MarketDataService MarketData
 @inject PatternService PatternService
 
@@ -18,7 +18,7 @@ else
         @foreach (var hit in hits)
         {
             <li>
-                <strong>@hit.Type</strong> @hit.Time.ToString("HH:mm") — Confidence: @hit.Confidence.ToString("P0")
+                <strong>@hit.Type</strong> @hit.Time.ToString("yyyy-MM-dd HH:mm") — Confidence: @hit.Confidence.ToString("P0")
             </li>
         }
     </ul>
