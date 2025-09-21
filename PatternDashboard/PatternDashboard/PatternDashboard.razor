@@ -1,27 +1,42 @@
-@inject IJSRuntime JS
+@using AIUI2025.Services
 @inject MarketDataService MarketData
+@inject PatternService PatternService
 
-<h3>Pattern Dashboard</h3>
-<div id="chartContainer" style="height: 400px; min-width: 310px"></div>
+<h3>Detected Patterns</h3>
+
+@if (hits == null)
+{
+    <p>Loading patterns...</p>
+}
+else if (hits.Count == 0)
+{
+    <p>No patterns detected.</p>
+}
+else
+{
+    <ul>
+        @foreach (var hit in hits)
+        {
+            <li>
+                <strong>@hit.Type</strong> @hit.Time.ToString("HH:mm") — Confidence: @hit.Confidence.ToString("P0")
+            </li>
+        }
+    </ul>
+
+    <p class="summary">@summary</p>
+}
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var candles = await MarketData.GetCandlesAsync();
-            var chartData = candles.Select(c => new object[]
-            {
-                DateTimeToUnix(c.Time),
-                c.Open, c.High, c.Low, c.Close
-            }).ToArray();
+    private List<PatternHit> hits;
+    private string summary;
 
-            await JS.InvokeVoidAsync("renderCandleChart", "chartContainer", chartData);
-        }
-    }
-
-    private long DateTimeToUnix(DateTime dt)
+    protected override async Task OnInitializedAsync()
     {
-        return new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+        var start = new DateTime(2025, 9, 15, 9, 0, 0);
+        var end = new DateTime(2025, 9, 16, 11, 0, 0);
+
+        var candles = await MarketData.GetCandlesAsync(start, end);
+        hits = PatternService.ExtractPatterns(candles);
+        summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
     }
 }

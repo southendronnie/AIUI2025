@@ -1,5 +1,6 @@
 
-  public class PatternService
+
+public class PatternService
   {
     public List<PatternHit> ExtractPatterns(List<Candle> candles)
     {
