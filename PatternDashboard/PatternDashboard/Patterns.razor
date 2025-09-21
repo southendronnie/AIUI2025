@@ -1,30 +1,36 @@
 ﻿@using AIUI2025.Services
 @inject MarketDataService MarketData
 @inject PatternService PatternService
+@inject IJSRuntime JS
+<div class="pattern-list">
+    <h3>📈 Detected Patterns</h3>
 
-<h3>Detected Patterns</h3>
+    @if (hits == null)
+    {
+        <p>Loading patterns...</p>
+    }
+    else if (hits.Count == 0)
+    {
+        <p>No patterns detected.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var hit in hits)
+            {
+                <li class="@GetPatternClass(hit.Type)">
+                    <a href="javascript:void(0)" @onclick="() => ScrollToTimestamp(hit.Time)">
+                        <span class="pattern-type">@hit.Type</span>
+                        <span class="pattern-time">@hit.Time:HH:mm</span>
+                        <span class="pattern-confidence">Confidence: @hit.Confidence.ToString("P0")</span>
+                    </a>
+                </li>
+            }
+        </ul>
 
-@if (hits == null)
-{
-    <p>Loading patterns...</p>
-}
-else if (hits.Count == 0)
-{
-    <p>No patterns detected.</p>
-}
-else
-{
-    <ul>
-        @foreach (var hit in hits)
-        {
-            <li>
-                <strong>@hit.Type</strong> @hit.Time.ToString("yyyy-MM-dd HH:mm") — Confidence: @hit.Confidence.ToString("P0")
-            </li>
-        }
-    </ul>
-
-    <p class="summary">@summary</p>
-}
+        <p class="summary">@summary</p>
+    }
+</div>
 
 @code {
     private List<PatternHit> hits;
@@ -39,4 +45,13 @@ else
         hits = PatternService.ExtractPatterns(candles);
         summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
     }
+
+    private string GetPatternClass(string type) =>
+        type.Contains("Bullish") ? "bullish" : "bearish";
+    private async Task ScrollToTimestamp(DateTime time)
+    {
+        var timestamp = new DateTimeOffset(time).ToUnixTimeMilliseconds();
+        await JS.InvokeVoidAsync("highlightCandle", timestamp);
+    }
+
 }
