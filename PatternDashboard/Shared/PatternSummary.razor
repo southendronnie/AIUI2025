@@ -1,0 +1,13 @@
+@code {
+    [Parameter] public IEnumerable<(string Direction, int Count)>? Summary { get; set; }
+}
+
+@if (Summary != null)
+{
+    <ul>
+        @foreach (var item in Summary)
+        {
+            <li><strong>@item.Direction</strong>: @item.Count</li>
+        }
+    </ul>
+}
