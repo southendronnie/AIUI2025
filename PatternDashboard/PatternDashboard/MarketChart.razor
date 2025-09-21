@@ -1,1 +1,38 @@
-<div id='chartContainer'></div>
+@using AIUI2025.Services
+@inject MarketDataService MarketData
+@inject PatternService PatternService
+@inject IJSRuntime JS
+
+<div id="chartContainer" style="height: 400px; min-width: 310px"></div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        var start = new DateTime(2025, 9, 15, 9, 0, 0);
+        var end = new DateTime(2025, 9, 16, 11, 0, 0);
+
+        var candles = await MarketData.GetLatestActiveWindowAsync();
+        var hits = PatternService.ExtractPatterns(candles); // ← this defines hits
+
+        var chartData = candles.Select(c => new object[]
+        {
+            DateTimeToUnix(c.Time),
+            c.Open, c.High, c.Low, c.Close
+        }).ToArray();
+
+        var patternPoints = hits.Select(h => new
+        {
+            x = DateTimeToUnix(h.Time),
+            y = candles.FirstOrDefault(c => c.Time == h.Time)?.Close ?? 0,
+            label = h.Type,
+            confidence = (int)(h.Confidence * 100)
+        }).ToArray();
+
+        await JS.InvokeVoidAsync("renderCandleChart", "chartContainer", chartData, patternPoints);
+    }
+
+    private long DateTimeToUnix(DateTime dt) =>
+        new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+}

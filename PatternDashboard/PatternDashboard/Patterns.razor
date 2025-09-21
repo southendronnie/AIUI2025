@@ -1,0 +1,64 @@
+﻿@using AIUI2025.Services
+@inject MarketDataService MarketData
+@inject PatternService PatternService
+@inject IJSRuntime JS
+<div class="pattern-list">
+    <h3>📈 Detected Patterns</h3>
+
+    @if (hits == null)
+    {
+        <p>Loading patterns...</p>
+    }
+    else if (hits.Count == 0)
+    {
+        <p>No patterns detected.</p>
+    }
+    else
+    {
+        <table class="pattern-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Time</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hit in hits)
+                {
+                    <tr class="@GetPatternClass(hit.Type)">
+                        <td>@hit.Type</td>
+                        <td>@hit.Time.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@hit.Confidence.ToString("P0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <p class="summary">@summary</p>
+    }
+</div>
+
+@code {
+    private List<PatternHit> hits;
+    private string summary;
+    protected override async Task OnInitializedAsync()
+    {
+        var start = new DateTime(2025, 9, 15, 9, 0, 0);
+        var end = new DateTime(2025, 9, 16, 11, 0, 0);
+
+        var candles = await MarketData.GetLatestActiveWindowAsync();
+        hits = PatternService.ExtractPatterns(candles);
+        summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
+    }
+    private string GetPatternClass(string type) =>
+        type.Contains("Bullish") ? "bullish-row" : "bearish-row";
+
+    private async Task ScrollToTimestamp(DateTime time)
+    {
+        var timestamp = new DateTimeOffset(time).ToUnixTimeMilliseconds();
+        await JS.InvokeVoidAsync("highlightCandle", timestamp);
+    }
+
+}

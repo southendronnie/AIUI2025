@@ -1,42 +1,43 @@
 
-  public class PatternService
+
+public class PatternService
   {
-    public List<PatternHit> ExtractPatterns(List<Candle> candles)
+  public List<PatternHit> ExtractPatterns(List<Candle> candles)
+  {
+    var hits = new List<PatternHit>();
+
+    for (int i = 1; i < candles.Count; i++)
     {
-      var hits = new List<PatternHit>();
+      var prev = candles[i - 1];
+      var current = candles[i];
 
-      for (int i = 1; i < candles.Count; i++)
+      if (prev.Close < prev.Open && current.Close > current.Open &&
+          current.Open < prev.Close && current.Close > prev.Open)
       {
-        var prev = candles[i - 1];
-        var current = candles[i];
-
-        if (prev.Close < prev.Open && current.Close > current.Open &&
-            current.Open < prev.Close && current.Close > prev.Open)
+        hits.Add(new PatternHit
         {
-          hits.Add(new PatternHit
-          {
-            Time = current.Time,
-            Type = "Bullish Engulfing",
-            Confidence = 0.85
-          });
-        }
-
-        if (prev.Close > prev.Open && current.Close < current.Open &&
-            current.Open > prev.Close && current.Close < prev.Open)
-        {
-          hits.Add(new PatternHit
-          {
-            Time = current.Time,
-            Type = "Bearish Engulfing",
-            Confidence = 0.85
-          });
-        }
+          Time = current.Time,
+          Type = "Bullish Engulfing",
+          Confidence = 0.85
+        });
       }
 
-      return hits;
+      if (prev.Close > prev.Open && current.Close < current.Open &&
+          current.Open > prev.Close && current.Close < prev.Open)
+      {
+        hits.Add(new PatternHit
+        {
+          Time = current.Time,
+          Type = "Bearish Engulfing",
+          Confidence = 0.85
+        });
+      }
     }
 
-    public string GetSummary(List<PatternHit> hits)
+    return hits;
+  }
+
+  public string GetSummary(List<PatternHit> hits)
     {
       if (hits == null || hits.Count == 0)
         return "No patterns detected.";

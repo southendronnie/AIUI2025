@@ -1,5 +1,4 @@
-﻿using PatternDashboard.Models;
-
+﻿
 namespace PatternDashboard.Stats
 {
   public class PatternStats
