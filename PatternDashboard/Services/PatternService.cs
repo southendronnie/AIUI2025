@@ -17,7 +17,7 @@ public class PatternService
           hits.Add(new PatternHit
           {
             Time = current.Time,
-            Type = "Bullish Engulfing",
+            Type = "Buy E",
             Confidence = 0.85
           });
         }
@@ -28,7 +28,7 @@ public class PatternService
           hits.Add(new PatternHit
           {
             Time = current.Time,
-            Type = "Bearish Engulfing",
+            Type = "Sell E",
             Confidence = 0.85
           });
         }

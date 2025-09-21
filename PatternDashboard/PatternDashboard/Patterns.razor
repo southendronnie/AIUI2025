@@ -15,18 +15,26 @@
     }
     else
     {
-        <ul>
-            @foreach (var hit in hits)
-            {
-                <li class="@GetPatternClass(hit.Type)">
-                    <a href="javascript:void(0)" @onclick="() => ScrollToTimestamp(hit.Time)">
-                        <span class="pattern-type">@hit.Type</span>
-                        <span class="pattern-time">@hit.Time:HH:mm</span>
-                        <span class="pattern-confidence">Confidence: @hit.Confidence.ToString("P0")</span>
-                    </a>
-                </li>
-            }
-        </ul>
+        <table class="pattern-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Time</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hit in hits)
+                {
+                    <tr class="@GetPatternClass(hit.Type)">
+                        <td>@hit.Type</td>
+                        <td>@hit.Time.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@hit.Confidence.ToString("P0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
 
         <p class="summary">@summary</p>
     }
@@ -35,7 +43,6 @@
 @code {
     private List<PatternHit> hits;
     private string summary;
-
     protected override async Task OnInitializedAsync()
     {
         var start = new DateTime(2025, 9, 15, 9, 0, 0);
@@ -45,9 +52,9 @@
         hits = PatternService.ExtractPatterns(candles);
         summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
     }
-
     private string GetPatternClass(string type) =>
-        type.Contains("Bullish") ? "bullish" : "bearish";
+        type.Contains("Bullish") ? "bullish-row" : "bearish-row";
+
     private async Task ScrollToTimestamp(DateTime time)
     {
         var timestamp = new DateTimeOffset(time).ToUnixTimeMilliseconds();
