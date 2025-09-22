@@ -1,0 +1,54 @@
+﻿@inject HttpClient Http
+
+<h3>📈 Pattern Overlay</h3>
+
+@if (patterns == null)
+{
+    <p>Loading pattern hits...</p>
+}
+else if (patterns.Count == 0)
+{
+    <p>No patterns detected in the last 30 minutes.</p>
+}
+else
+{
+    <table class="pattern-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Time</th>
+                <th>Confidence</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in patterns)
+            {
+                <tr class="@GetRowClass(p.Type)">
+                    <td>@p.Type</td>
+                    <td>@p.Time.ToLocalTime():HH:mm:ss</td>
+                    <td>@p.Confidence.ToString("P0")</td>
+                    <td>@p.Score.ToString("F4")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ScoredPattern>? patterns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var now = DateTime.UtcNow;
+        var start = now.AddMinutes(-30);
+        var end = now;
+
+        var url = $"https://fxai2-hrgzeve9dka0aqg3.canadacentral-01.azurewebsites.net/api/patterns/1m?start={start:s}&end={end:s}";
+        patterns = await Http.GetFromJsonAsync<List<ScoredPattern>>(url);
+    }
+
+    private string GetRowClass(string type) =>
+        type.Contains("Bullish") ? "bullish-row" : "bearish-row";
+
+}

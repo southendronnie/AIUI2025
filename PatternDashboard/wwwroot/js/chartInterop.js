@@ -40,3 +40,26 @@ window.highlightCandle = function (timestamp) {
 
     chart.xAxis[0].setExtremes(timestamp - 60000, timestamp + 60000); // Zoom to ±1min
 };
+window.renderTickChart = function (data) {
+    const ctx = document.getElementById('tickChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.map(d => d.time),
+            datasets: [{
+                label: 'Mid Price',
+                data: data.map(d => d.mid),
+                borderColor: '#007bff',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            animation: false,
+            scales: {
+                x: { display: true },
+                y: { display: true }
+            }
+        }
+    });
+};

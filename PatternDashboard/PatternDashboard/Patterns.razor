@@ -41,8 +41,8 @@
 </div>
 
 @code {
-    private List<PatternHit> hits;
-    private string summary;
+    private List<PatternHit> hits = new();
+    private string summary = "";
     protected override async Task OnInitializedAsync()
     {
         var start = new DateTime(2025, 9, 15, 9, 0, 0);

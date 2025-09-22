@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Content Remove="Pages\Patterns.razor" />
+    <Content Remove="PatternOverlyay.razor" />
+    <Content Remove="Shared\PatternSnapshot.razor" />
   </ItemGroup>
 
 </Project>

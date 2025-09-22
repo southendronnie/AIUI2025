@@ -1,0 +1,40 @@
+﻿@using AIUI2025.Services
+@inject MarketDataService MarketData
+@inject PatternService PatternService
+<h4>📈 Pattern Snapshot (Last 30m)</h4>
+
+@if (patterns == null)
+{
+    <p>Loading...</p>
+}
+else if (patterns.Count == 0)
+{
+    <p>No patterns detected.</p>
+}
+else
+{
+    <ul>
+        @foreach (var p in patterns.Take(5))
+        {
+            <li>
+                <strong>@p.Type</strong> @p.Time.ToLocalTime():HH:mm
+                — Score: <span style="color:@(p.Score > 0.95 ? "green" : "gray")">@p.Score.ToString("F4")</span>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<ScoredPattern>? patterns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var now = DateTime.UtcNow;
+        var start = now.AddMinutes(-30);
+        var end = now;
+
+        PatternService patternService = PatternService;
+        patterns = await patternService.GetScoredPatternsAsync(start, end);
+    }
+
+}

@@ -1,0 +1,53 @@
+﻿@inject CandleBuilder CandleBuilder
+
+<h3>🕯️ 1-Minute Candles (Last 10m)</h3>
+
+@if (candles == null)
+{
+    <p>Building candles...</p>
+}
+else if (candles.Count == 0)
+{
+    <p>No candles available.</p>
+}
+else
+{
+    <table class="candle-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Volume</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in candles.TakeLast(10).Reverse())
+            {
+                <tr>
+                    <td>@c.Time.ToLocalTime():HH:mm</td>
+                    <td>@c.Open.ToString("F5")</td>
+                    <td>@c.High.ToString("F5")</td>
+                    <td>@c.Low.ToString("F5")</td>
+                    <td>@c.Close.ToString("F5")</td>
+                    <td>@c.Volume</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Candle>? candles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var now = DateTime.UtcNow;
+        var start = now.AddMinutes(-10);
+        var end = now;
+
+        candles = await CandleBuilder.BuildCandlesAsync(start, end, TimeSpan.FromMinutes(1));
+    }
+}

@@ -1,7 +1,23 @@
 
 
+
+
+
 public class PatternService
   {
+    private readonly HttpClient _http;
+
+    public PatternService(HttpClient http)
+    {
+      _http = http;
+    }
+
+    public async Task<List<ScoredPattern>> GetScoredPatternsAsync(DateTime start, DateTime end)
+    {
+      var url = $"/api/patterns/1m?start={start:s}&end={end:s}";
+      return await _http.GetFromJsonAsync<List<ScoredPattern>>(url) ?? new();
+    }
+
   public List<PatternHit> ExtractPatterns(List<Candle> candles)
   {
     var hits = new List<PatternHit>();

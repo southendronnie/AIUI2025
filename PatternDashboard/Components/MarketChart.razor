@@ -2,10 +2,16 @@
 @inject MarketDataService MarketData
 @inject PatternService PatternService
 @inject IJSRuntime JS
+@inject TickService TickService
+
+<canvas id="tickChart" width="800" height="400"></canvas>
+
 
 <div id="chartContainer" style="height: 400px; min-width: 310px"></div>
 
 @code {
+    private List<PriceTick> ticks = new();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
@@ -31,6 +37,21 @@
         }).ToArray();
 
         await JS.InvokeVoidAsync("renderCandleChart", "chartContainer", chartData, patternPoints);
+
+        try
+        {
+        ticks = await TickService.GetTicksAsync(start, end);
+            await JS.InvokeVoidAsync("renderTickChart", ticks.Select(t => new
+            {
+                time = t.Time.ToLocalTime().ToString("HH:mm:ss"),
+                mid = (double)t.Mid
+            }));
+
+        }
+        catch (Exception)
+        {
+            
+        }
     }
 
     private long DateTimeToUnix(DateTime dt) =>

@@ -1,0 +1,53 @@
+﻿@inject PatternService PatternService
+
+<h3>📊 Pattern Hits</h3>
+
+@if (patterns == null)
+{
+    <p>Loading...</p>
+}
+else if (patterns.Count == 0)
+{
+    <p>No patterns detected.</p>
+}
+else
+{
+    <table class="pattern-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Time</th>
+                <th>Confidence</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in patterns)
+            {
+                <tr class="@GetRowClass(p.Type)">
+                    <td>@p.Type</td>
+                    <td>@p.Time.ToLocalTime():HH:mm:ss</td>
+                    <td>@p.Confidence.ToString("P0")</td>
+                    <td>@p.Score.ToString("F4")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ScoredPattern>? patterns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var now = DateTime.UtcNow;
+        var start = now.AddMinutes(-30);
+        var end = now;
+
+        PatternService patternService = PatternService;
+        patterns = await patternService.GetScoredPatternsAsync(start, end);
+    }
+
+    private string GetRowClass(string type) =>
+        type.Contains("Bullish") ? "bullish-row" : "bearish-row";
+}

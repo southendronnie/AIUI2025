@@ -1,0 +1,70 @@
+﻿@inject TickService TickService
+@inject IJSRuntime JS
+
+<h3>📉 Live Tick Stream</h3>
+
+@if (ticks == null)
+{
+    <p>Loading ticks...</p>
+}
+else if (ticks.Count == 0)
+{
+    <p>No recent ticks.</p>
+}
+else
+{
+    <ul class="tick-list">
+        @foreach (var tick in ticks.TakeLast(10).Reverse())
+        {
+            <li>
+                <strong>@tick.Time.ToLocalTime():HH:mm:ss</strong> —
+                Bid: @tick.Bid.ToString("F5"),
+                Ask: @tick.Ask.ToString("F5")
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("renderTickChart", ticks.Select(t => new
+            {
+                time = t.Time.ToLocalTime().ToString("HH:mm:ss"),
+                mid = (double)t.Mid
+            }));
+        }
+    }
+    private List<PriceTick> ticks = new();
+    private CancellationTokenSource? _cts;
+
+    protected override void OnInitialized()
+    {
+        _cts = new CancellationTokenSource();
+        _ = RefreshTicksLoopAsync(_cts.Token);
+    }
+
+    private async Task RefreshTicksLoopAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            var now = DateTime.UtcNow;
+            var start = now.AddMinutes(-1);
+            var end = now;
+
+            var latest = await TickService.GetTicksAsync(start, end);
+            ticks = latest;
+            await InvokeAsync(StateHasChanged);
+
+            await Task.Delay(TimeSpan.FromSeconds(5), token);
+        }
+    }
+
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
+}
