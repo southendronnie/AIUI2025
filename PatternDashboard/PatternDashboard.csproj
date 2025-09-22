@@ -10,6 +10,7 @@
     <Content Remove="Pages\Patterns.razor" />
     <Content Remove="PatternOverlyay.razor" />
     <Content Remove="Shared\PatternSnapshot.razor" />
+    <Content Remove="wwwroot\js\chart.js" />
   </ItemGroup>
 
 </Project>
