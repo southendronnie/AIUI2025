@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FXAI\Models\FXAI.Models.csproj" />
+    <ProjectReference Include="..\Models\FXAI.Models.csproj" />
   </ItemGroup>
 
 </Project>
