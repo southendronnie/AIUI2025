@@ -17,7 +17,7 @@ else
         @foreach (var tick in ticks.TakeLast(10).Reverse())
         {
             <li>
-                <strong>@tick.Time.ToLocalTime():HH:mm:ss</strong> —
+                <strong>@tick.Time.ToLocalTime()</strong> —
                 Bid: @tick.Bid.ToString("F5"),
                 Ask: @tick.Ask.ToString("F5")
             </li>

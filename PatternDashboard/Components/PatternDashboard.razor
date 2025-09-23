@@ -26,7 +26,7 @@ else
             {
                 <tr class="@GetRowClass(p.Type)">
                     <td>@p.Type</td>
-                    <td>@p.Time.ToLocalTime():HH:mm:ss</td>
+                    <td>@p.Time.ToLocalTime().ToString("HH:mm:ss")</td>
                     <td>@p.Confidence.ToString("P0")</td>
                     <td>@p.Score.ToString("F4")</td>
                 </tr>

@@ -8,30 +8,28 @@
 @layout MainLayout
 
 
-<h1 class="dashboard-title">📊 AIUI2025 Market Dashboard</h1>
+<h1 class="dashboard-title"Market Dashboard</h1>
 
 <div class="dashboard-row">
-    <section class="panel wide">
-        <h2>📈 Market Chart</h2>
+    <section class="panel ">
+        <h3> Market Chart</h3>
         <PatternDashboard.Components.MarketChart />
     </section>
 
+</div>
+<div class="dashboard-row">
     <section class="panel narrow">
-        <h2>🕒 Live Ticks</h2>
+        <h3> Pattern Hits</h3>
+        <PatternDashboard.Components.PatternOverlay />
+    </section>
+    <section class="panel narrow">
         <PatternDashboard.Components.TickStream />
     </section>
-</div>
 
-<div class="dashboard-row">
-    <section class="panel">
-        <h2>🕯️ Candlestick Snapshot</h2>
+    <section class="panel narrow">
         <PatternDashboard.Components.CandleStream />
     </section>
 
-    <section class="panel">
-        <h2>📊 Pattern Hits</h2>
-        <PatternDashboard.Components.PatternOverlay />
-    </section>
 </div>
 
 

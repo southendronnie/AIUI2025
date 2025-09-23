@@ -27,7 +27,7 @@ else
             @foreach (var c in candles.TakeLast(10).Reverse())
             {
                 <tr>
-                    <td>@c.Time.ToLocalTime():HH:mm</td>
+                    <td>@c.Time.ToLocalTime().ToString("HH:mm:ss")</td>
                     <td>@c.Open.ToString("F5")</td>
                     <td>@c.High.ToString("F5")</td>
                     <td>@c.Low.ToString("F5")</td>
