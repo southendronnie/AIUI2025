@@ -1,0 +1,87 @@
+@page "/backtest"
+@using FXAI.Models
+@inject HttpClient Http
+
+<h3>Backtest Results</h3>
+
+<EditForm Model="@request" OnValidSubmit="RunBacktest">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row">
+        <div class="col-md-4">
+            <label>Start</label>
+            <InputDate @bind-Value="request.Start" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>End</label>
+            <InputDate @bind-Value="request.End" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label>Stop Loss (pips)</label>
+            <InputNumber @bind-Value="request.StopLossPips" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Take Profit (pips)</label>
+            <InputNumber @bind-Value="request.TakeProfitPips" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label>Holding Period (min)</label>
+            <InputNumber @bind-Value="request.HoldingPeriodMinutes" class="form-control" />
+        </div>
+    </div>
+
+    <button class="btn btn-primary mt-3" type="submit">Run Backtest</button>
+</EditForm>
+
+@if (result != null)
+{
+    <div class="mt-4">
+        <h5>Trades: @result.TotalTrades | Wins: @result.Wins | Losses: @result.Losses</h5>
+        <p>Win Rate: @(result.WinRate.ToString("P")) | Net Profit: @result.NetProfit</p>
+
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Entry</th><th>Exit</th><th>Pattern</th><th>Profit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var trade in result.Trades)
+                {
+                    <tr class="@(trade.Profit > 0 ? "table-success" : "table-danger")">
+                        <td>@trade.EntryTime</td>
+                        <td>@trade.ExitTime</td>
+                        <td>@trade.PatternType</td>
+                        <td>@trade.Profit</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private BacktestRequest request = new()
+    {
+        Start = DateTime.UtcNow.AddDays(-1),
+        End = DateTime.UtcNow,
+        StopLossPips = 10,
+        TakeProfitPips = 20,
+        HoldingPeriodMinutes = 2
+    };
+
+    private BacktestResult? result;
+
+    private async Task RunBacktest()
+    {
+        var response = await Http.PostAsJsonAsync("api/backtest/run", request);
+        if (response.IsSuccessStatusCode)
+        {
+            result = await response.Content.ReadFromJsonAsync<BacktestResult>();
+        }
+    }
+}

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatternDashboard", "PatternDashboard\PatternDashboard.csproj", "{0A1776F9-F771-69E3-ED63-48CA95F58689}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FXAI.Models", "..\FXAI\Models\FXAI.Models.csproj", "{4D3FF280-DB7D-EF5C-E077-EB1686C49135}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0A1776F9-F771-69E3-ED63-48CA95F58689}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A1776F9-F771-69E3-ED63-48CA95F58689}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A1776F9-F771-69E3-ED63-48CA95F58689}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D3FF280-DB7D-EF5C-E077-EB1686C49135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D3FF280-DB7D-EF5C-E077-EB1686C49135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D3FF280-DB7D-EF5C-E077-EB1686C49135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D3FF280-DB7D-EF5C-E077-EB1686C49135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

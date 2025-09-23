@@ -13,4 +13,8 @@
     <Content Remove="wwwroot\js\chart.js" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\FXAI\Models\FXAI.Models.csproj" />
+  </ItemGroup>
+
 </Project>

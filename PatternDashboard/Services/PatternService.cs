@@ -4,19 +4,19 @@
 
 
 public class PatternService
+{
+  private readonly HttpClient _http;
+
+  public PatternService(HttpClient http)
   {
-    private readonly HttpClient _http;
+    _http = http;
+  }
 
-    public PatternService(HttpClient http)
-    {
-      _http = http;
-    }
-
-    public async Task<List<ScoredPattern>> GetScoredPatternsAsync(DateTime start, DateTime end)
-    {
-      var url = $"/api/patterns/1m?start={start:s}&end={end:s}";
-      return await _http.GetFromJsonAsync<List<ScoredPattern>>(url) ?? new();
-    }
+  public async Task<List<ScoredPattern>> GetScoredPatternsAsync(DateTime start, DateTime end)
+  {
+    var url = $"/api/patterns/1m?start={start:s}&end={end:s}";
+    return await _http.GetFromJsonAsync<List<ScoredPattern>>(url) ?? new();
+  }
 
   public List<PatternHit> ExtractPatterns(List<Candle> candles)
   {
@@ -54,17 +54,17 @@ public class PatternService
   }
 
   public string GetSummary(List<PatternHit> hits)
-    {
-      if (hits == null || hits.Count == 0)
-        return "No patterns detected.";
+  {
+    if (hits == null || hits.Count == 0)
+      return "No patterns detected.";
 
-      var grouped = hits
-          .GroupBy(h => h.Type)
-          .Select(g => $"{g.Key}: {g.Count()} hits")
-          .ToList();
+    var grouped = hits
+        .GroupBy(h => h.Type)
+        .Select(g => $"{g.Key}: {g.Count()} hits")
+        .ToList();
 
-      return $"Detected Patterns:\n" + string.Join("\n", grouped);
-    }
+    return $"Detected Patterns:\n" + string.Join("\n", grouped);
+  }
   public string GetSummary(List<PatternHit> hits, TimeSpan windowSize)
   {
     if (hits == null || hits.Count == 0)
