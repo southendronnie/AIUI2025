@@ -4,17 +4,23 @@
      <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>7c6d1ed7-9f03-41e6-94bf-3af9b8d72b94</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Remove="Pages\Patterns.razor" />
+    <Content Remove="PatternDashboard\PatternDashboard.razor" />
     <Content Remove="PatternOverlyay.razor" />
     <Content Remove="Shared\PatternSnapshot.razor" />
     <Content Remove="wwwroot\js\chart.js" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FXAI\Models\FXAI.Models.csproj" />
+    <PackageReference Include="MudBlazor" Version="8.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Models\FXAI.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,18 +3,23 @@
 
 
 
+using Microsoft.Extensions.Options;
+
 public class PatternService
 {
   private readonly HttpClient _http;
 
-  public PatternService(HttpClient http)
+  private readonly string _marketDataUrl;
+
+  public PatternService(HttpClient http, IOptions<ApiSettings> options)
   {
     _http = http;
+    _marketDataUrl = options.Value.MarketDataUrl;
   }
 
   public async Task<List<ScoredPattern>> GetScoredPatternsAsync(DateTime start, DateTime end)
   {
-    var url = $"/api/patterns/1m?start={start:s}&end={end:s}";
+    var url = $"{_marketDataUrl}/patterns/1m?start={start:s}&end={end:s}";
     return await _http.GetFromJsonAsync<List<ScoredPattern>>(url) ?? new();
   }
 
