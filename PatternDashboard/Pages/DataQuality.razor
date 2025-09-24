@@ -1,8 +1,6 @@
 ﻿@page "/data-quality"
-<<<<<<< HEAD
 @using FXAI.Models
 @inject HttpClient Http
-
 <h3>📊 Data Quality Diagnostics</h3>
 
 @if (stats != null)
@@ -51,26 +49,4 @@ else
         gaps = await Http.GetFromJsonAsync<List<DataGap>>($"{Stat.Url}/data/gaps");
     }
 
-
-=======
-@inject HttpClient Http
-
-<h3>Data Quality Overview</h3>
-
-<DataSummary Stats="@stats" />
-<DataGapChart Gaps="@gaps" />
-<DataTable Candles="@candles" />
-
-@code {
-    private List<Candle> candles = new();
-    private List<DataGap> gaps = new();
-    private DataStats stats;
-
-    protected override async Task OnInitializedAsync()
-    {
-        candles = await Http.GetFromJsonAsync<List<Candle>>("/api/data/candles");
-        gaps = await Http.GetFromJsonAsync<List<DataGap>>("/api/data/gaps");
-        stats = await Http.GetFromJsonAsync<DataStats>("/api/data/stats");
-    }
->>>>>>> 09f592b0a7f10f5846f5fce5607c1278757e7eda
 }
