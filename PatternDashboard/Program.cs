@@ -2,8 +2,18 @@ using AIUI2025.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using PatternDashboard.Data;
+using Microsoft.Extensions.Options;
+using FXAI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Stat.Url = builder.Configuration.GetSection("ApiSettings").GetSection("MarketDataUrl").Value;
+
+builder.Services.Configure<ApiSettings>(
+    builder.Configuration.GetSection("ApiSettings"));
+
+builder.Services.AddSingleton(resolver =>
+    resolver.GetRequiredService<IOptions<ApiSettings>>().Value);
 
 // Add services to the container.
 builder.Services.AddRazorPages();

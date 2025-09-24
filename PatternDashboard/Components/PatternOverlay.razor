@@ -44,8 +44,8 @@ else
         var start = now.AddMinutes(-30);
         var end = now;
 
-        var url = $"https://fxai2-hrgzeve9dka0aqg3.canadacentral-01.azurewebsites.net/api/patterns/1m?start={start:s}&end={end:s}";
-        patterns = await Http.GetFromJsonAsync<List<ScoredPattern>>(url);
+       // var url = $"{_marketDataUrl}/api/patterns/1m?start={start:s}&end={end:s}";
+       // patterns = await Http.GetFromJsonAsync<List<ScoredPattern>>(url);
     }
 
     private string GetRowClass(string type) =>

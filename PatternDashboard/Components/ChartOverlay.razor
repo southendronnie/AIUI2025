@@ -1,0 +1,30 @@
+﻿@inject IJSRuntime JS
+@using FXAI.Models
+
+<div id="backtestChart" style="height: 500px; min-width: 100%;"></div>
+
+@code {
+    [Parameter] public List<Candle> Candles { get; set; } = new();
+    [Parameter] public List<SimulatedTrade> Trades { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var chartData = Candles.Select(c => new object[] {
+                new DateTimeOffset(c.Time).ToUnixTimeMilliseconds(),
+                c.Open, c.High, c.Low, c.Close
+            }).ToList();
+
+            var markers = Trades.Select(t => new
+            {
+                x = new DateTimeOffset(t.EntryTime).ToUnixTimeMilliseconds(),
+                title = t.Profit > 0 ? "✔" : "✖",
+                text = $"{t.PatternType}: {t.Profit:F2}",
+                color = t.Profit > 0 ? "green" : "red"
+            }).ToList();
+
+            await JS.InvokeVoidAsync("renderBacktestChart", chartData, markers);
+        }
+    }
+}

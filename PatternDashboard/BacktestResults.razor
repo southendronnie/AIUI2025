@@ -1,5 +1,6 @@
 @page "/backtest"
 @using FXAI.Models
+@using Microsoft.Extensions.Options
 @inject HttpClient Http
 
 <h3>Backtest Results</h3>
@@ -78,7 +79,7 @@
 
     private async Task RunBacktest()
     {
-        var response = await Http.PostAsJsonAsync("api/backtest/run", request);
+        var response = await Http.PostAsJsonAsync("${Stat.Url}/backtest/run", request);
         if (response.IsSuccessStatusCode)
         {
             result = await response.Content.ReadFromJsonAsync<BacktestResult>();

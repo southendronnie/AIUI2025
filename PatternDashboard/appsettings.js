@@ -1,5 +1,0 @@
-﻿{
-    "ApiSettings": {
-        "MarketDataUrl": "https://fxai2-hrgzeve9dka0aqg3.canadacentral-01.azurewebsites.net"
-    }
-}

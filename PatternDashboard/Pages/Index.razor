@@ -14,6 +14,9 @@
         <PatternDashboard.Components.MarketChart />
     </section>
 
+<button class="btn btn-outline-primary" @onclick="ShowBacktestModal">
+    Run Backtest
+</button>
 </div>
 <div class="dashboard-row">
     <section class="panel narrow">
@@ -27,6 +30,30 @@
     <section class="panel narrow">
         <PatternDashboard.Components.CandleStream />
     </section>
+
+
 </div>
 
 
+@if (showBacktest)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Backtest Strategy</h5>
+                    <button type="button" class="btn-close" @onclick="HideBacktestModal"></button>
+                </div>
+                <div class="modal-body">
+                    <BacktestResults />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@code {
+    private bool showBacktest = false;
+
+    private void ShowBacktestModal() => showBacktest = true;
+    private void HideBacktestModal() => showBacktest = false;
+}
