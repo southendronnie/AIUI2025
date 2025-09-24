@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatternDashboard", "PatternDashboard\PatternDashboard.csproj", "{0A1776F9-F771-69E3-ED63-48CA95F58689}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FXAI.Models", "Models\FXAI.Models.csproj", "{5220D9C4-7D22-9C78-9C8F-6B2710DE4BBB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A1776F9-F771-69E3-ED63-48CA95F58689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A1776F9-F771-69E3-ED63-48CA95F58689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A1776F9-F771-69E3-ED63-48CA95F58689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A1776F9-F771-69E3-ED63-48CA95F58689}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5220D9C4-7D22-9C78-9C8F-6B2710DE4BBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5220D9C4-7D22-9C78-9C8F-6B2710DE4BBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5220D9C4-7D22-9C78-9C8F-6B2710DE4BBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5220D9C4-7D22-9C78-9C8F-6B2710DE4BBB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F560D2DC-68A6-4B0B-830F-6E9068797648}
+	EndGlobalSection
+EndGlobal

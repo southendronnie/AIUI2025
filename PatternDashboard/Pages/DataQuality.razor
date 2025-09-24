@@ -1,0 +1,21 @@
+﻿@page "/data-quality"
+@inject HttpClient Http
+
+<h3>Data Quality Overview</h3>
+
+<DataSummary Stats="@stats" />
+<DataGapChart Gaps="@gaps" />
+<DataTable Candles="@candles" />
+
+@code {
+    private List<Candle> candles = new();
+    private List<DataGap> gaps = new();
+    private DataStats stats;
+
+    protected override async Task OnInitializedAsync()
+    {
+        candles = await Http.GetFromJsonAsync<List<Candle>>("/api/data/candles");
+        gaps = await Http.GetFromJsonAsync<List<DataGap>>("/api/data/gaps");
+        stats = await Http.GetFromJsonAsync<DataStats>("/api/data/stats");
+    }
+}
