@@ -1,16 +1,16 @@
 @page "/"
 @using AIUI2025.Services
+@using System.Text.Json
 @using global::PatternDashboard.Shared
 @inject MarketDataService MarketData
 @inject PatternService PatternService
+@inject HttpClient Http
 
 @layout MainLayout
 
-<h1 class="dashboard-title"Market Dashboard</h1>
 
 <div class="dashboard-row">
     <section class="panel ">
-        <h3> Market Chart</h3>
         <PatternDashboard.Components.MarketChart />
     </section>
 
@@ -20,24 +20,25 @@
 </div>
 <div class="dashboard-row">
     <section class="panel narrow">
-        <h3> Pattern Hits</h3>
-        <PatternDashboard.Components.PatternOverlay />
+        <PatternDashboard.Components.PatternDashboard />
     </section>
     <section class="panel narrow">
         <PatternDashboard.Components.TickStream />
     </section>
-
+</div>
+<div class="dashboard-row">
     <section class="panel narrow">
         <PatternDashboard.Components.CandleStream />
     </section>
-
-
+    <section class="panel narrow">
+            <PatternDashboard.Components.PatternOverlay />
+    </section>
 </div>
 
 
 @if (showBacktest)
 {
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -45,7 +46,39 @@
                     <button type="button" class="btn-close" @onclick="HideBacktestModal"></button>
                 </div>
                 <div class="modal-body">
-                    <BacktestResults />
+                    <div class="modal-body">
+                        <EditForm Model="@request" OnValidSubmit="RunBacktest">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="mb-3">
+                                <label>Start Date</label>
+                                <InputDate @bind-Value="request.Start" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>End Date</label>
+                                <InputDate @bind-Value="request.End" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Stop Loss (pips)</label>
+                                <InputNumber @bind-Value="request.Config.StopLossPips" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Take Profit (pips)</label>
+                                <InputNumber @bind-Value="request.Config.TakeProfitPips" class="form-control" />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Run Backtest</button>
+                        </EditForm>
+
+                        @if (result != null)
+                        {
+                            <BacktestResults Start="@request.Start" End="@request.End" Config="@request.Config" />
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,7 +86,49 @@
 }
 @code {
     private bool showBacktest = false;
+    private BacktestRequest request = new()
+    {
+        Start = DateTime.Today.AddMonths(-1),
+        End = DateTime.Today,
+        Config = new StrategyConfig()
+    };
 
+    private BacktestResult? result;
+
+    private async Task RunBacktest()
+    {
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"{Stat.Url}/backtest/run", request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(content))
+                {
+                    result = JsonSerializer.Deserialize<BacktestResult>(content, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                }
+                else
+                {
+                    Console.WriteLine("Response body was empty.");
+                }
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"API error: {response.StatusCode}, Body: {error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"💥 Exception during backtest: {ex.Message}");
+        }
+    }
     private void ShowBacktestModal() => showBacktest = true;
     private void HideBacktestModal() => showBacktest = false;
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using PatternDashboard.Data;
 using Microsoft.Extensions.Options;
-using FXAI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

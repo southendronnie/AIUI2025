@@ -1,5 +1,4 @@
 ﻿@inject IJSRuntime JS
-@using FXAI.Models
 
 <div id="backtestChart" style="height: 500px; min-width: 100%;"></div>
 
@@ -18,7 +17,7 @@
 
             var markers = Trades.Select(t => new
             {
-                x = new DateTimeOffset(t.EntryTime).ToUnixTimeMilliseconds(),
+                x = new DateTimeOffset(t.Time).ToUnixTimeMilliseconds(),
                 title = t.Profit > 0 ? "✔" : "✖",
                 text = $"{t.PatternType}: {t.Profit:F2}",
                 color = t.Profit > 0 ? "green" : "red"

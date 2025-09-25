@@ -1,88 +1,105 @@
-@page "/backtest"
-@using FXAI.Models
-@using Microsoft.Extensions.Options
+@using System.Text.Json
 @inject HttpClient Http
 
-<h3>Backtest Results</h3>
-
-<EditForm Model="@request" OnValidSubmit="RunBacktest">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="row">
-        <div class="col-md-4">
-            <label>Start</label>
-            <InputDate @bind-Value="request.Start" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label>End</label>
-            <InputDate @bind-Value="request.End" class="form-control" />
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-md-4">
-            <label>Stop Loss (pips)</label>
-            <InputNumber @bind-Value="request.StopLossPips" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label>Take Profit (pips)</label>
-            <InputNumber @bind-Value="request.TakeProfitPips" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label>Holding Period (min)</label>
-            <InputNumber @bind-Value="request.HoldingPeriodMinutes" class="form-control" />
-        </div>
-    </div>
-
-    <button class="btn btn-primary mt-3" type="submit">Run Backtest</button>
-</EditForm>
-
-@if (result != null)
+@if (result == null)
 {
-    <div class="mt-4">
-        <h5>Trades: @result.TotalTrades | Wins: @result.Wins | Losses: @result.Losses</h5>
-        <p>Win Rate: @(result.WinRate.ToString("P")) | Net Profit: @result.NetProfit</p>
-
-        <table class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th>Entry</th><th>Exit</th><th>Pattern</th><th>Profit</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var trade in result.Trades)
-                {
-                    <tr class="@(trade.Profit > 0 ? "table-success" : "table-danger")">
-                        <td>@trade.EntryTime</td>
-                        <td>@trade.ExitTime</td>
-                        <td>@trade.PatternType</td>
-                        <td>@trade.Profit</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+    <p>Running backtest…</p>
 }
+else
+{
+    <div class="summary">
+        <p><strong>Total Trades:</strong> @result.TotalTrades</p>
+        <p><strong>Wins:</strong> @result.Wins</p>
+        <p><strong>Losses:</strong> @result.Losses</p>
+        <p><strong>Win Rate:</strong> @($"{result.WinRate:P2}")</p>
+        <p><strong>Total Profit:</strong> @($"{result.TotalProfit:F2}")</p>
+        <p><strong>Max Drawdown:</strong> @($"{result.MaxDrawdown:F2}")</p>
+    </div>
 
+    <h4>Trade History</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Pattern</th>
+                <th>Direction</th>
+                <th>Entry</th>
+                <th>Exit</th>
+                <th>Outcome</th>
+                <th>Profit</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trade in result.Trades)
+            {
+                <tr>
+                    <td>@trade.Time.ToString("g")</td>
+                    <td>@trade.PatternType</td>
+                    <td>@trade.Direction</td>
+                    <td>@trade.Entry</td>
+                    <td>@trade.Exit</td>
+                    <td>@trade.Outcome</td>
+                    <td>@($"{trade.Profit:F2}")</td>
+                    <td>@trade.Duration</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Equity Curve</h4>
+}
 @code {
-    private BacktestRequest request = new()
-    {
-        Start = DateTime.UtcNow.AddDays(-1),
-        End = DateTime.UtcNow,
-        StopLossPips = 10,
-        TakeProfitPips = 20,
-        HoldingPeriodMinutes = 2
-    };
+    [Parameter]
+    public DateTime Start { get; set; }
+
+    [Parameter]
+    public DateTime End { get; set; }
+
+    [Parameter]
+    public StrategyConfig Config { get; set; } = new();
 
     private BacktestResult? result;
 
-    private async Task RunBacktest()
+    protected override async Task OnInitializedAsync()
     {
-        var response = await Http.PostAsJsonAsync("${Stat.Url}/backtest/run", request);
-        if (response.IsSuccessStatusCode)
+        var request = new BacktestRequest
         {
-            result = await response.Content.ReadFromJsonAsync<BacktestResult>();
+            Start = Start,
+            End = End,
+            Config = Config
+        };
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"{Stat.Url}/api/backtest/run", request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(content))
+                {
+                    result = JsonSerializer.Deserialize<BacktestResult>(content, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+                }
+                else
+                {
+                    Console.WriteLine("Response body was empty.");
+                }
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"API error: {response.StatusCode}, Body: {error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"💥 Exception during backtest: {ex.Message}");
         }
     }
+
 }
