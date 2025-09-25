@@ -15,17 +15,6 @@
     <Content Remove="wwwroot\js\chart.js" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\BacktestRequest.cs" Link="Models\Shared\BacktestRequest.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\BacktestResult.cs" Link="Models\Shared\BacktestResult.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\DataGap.cs" Link="Models\Shared\DataGap.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\DataStats.cs" Link="Models\Shared\DataStats.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\EquityPoint.cs" Link="Models\Shared\EquityPoint.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\SimulatedTrade.cs" Link="Models\Shared\SimulatedTrade.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\Stat.cs" Link="Models\Shared\Stat.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\StrategyConfig.cs" Link="Models\Shared\StrategyConfig.cs" />
-    <Compile Include="..\..\FXAIB2\OandaDataApi\Models\Shared\TradeSignal.cs" Link="Models\Shared\TradeSignal.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="8.12.0" />
