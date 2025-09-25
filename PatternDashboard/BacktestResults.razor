@@ -72,7 +72,7 @@ else
 
         try
         {
-            var response = await Http.PostAsJsonAsync($"{Stat.Url}/api/backtest/run", request);
+            var response = await Http.PostAsJsonAsync($"{Stat.Url}/backtest/run", request);
 
             if (response.IsSuccessStatusCode)
             {
