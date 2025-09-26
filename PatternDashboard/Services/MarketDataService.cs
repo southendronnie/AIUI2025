@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace AIUI2025.Services
       _marketDataUrl = options.Value.MarketDataUrl;
     }
 
-    public async Task<List<Candle>> GetLatestActiveWindowAsync()
+    public async Task<List<Candle>> GetLatestActiveWindowAsync( )
     {
       var now = DateTime.UtcNow;
       var scanStart = now;
@@ -26,12 +27,12 @@ namespace AIUI2025.Services
 
       for (var offset = TimeSpan.Zero; offset <= maxLookback; offset += scanStep)
       {
-        var end = scanStart - offset;
-        var start = end - windowSize;
+        var windowEnd = scanStart - offset;
+        var windowStart = windowEnd - windowSize;
 
-        var candles = await FetchCandles(start, end);
+        var candles = await GetCandlesAsync(windowStart, windowEnd);
 
-        bool hasRecentActivity = candles.Any(c => c.Time >= end.AddMinutes(-13));
+        bool hasRecentActivity = candles.Any(c => c.Time >= windowEnd.AddMinutes(-13));
 
         if (hasRecentActivity)
           return candles;
@@ -45,9 +46,15 @@ namespace AIUI2025.Services
     {
       string baseUrl = $"{_marketDataUrl}/candles/1m";
       string url = $"{baseUrl}?start={Uri.EscapeDataString(start.ToString("s"))}&end={Uri.EscapeDataString(end.ToString("s"))}";
+      Debug.WriteLine($"{start} {end}");
 
       var candles = await _http.GetFromJsonAsync<List<Candle>>(url);
       return candles ?? new List<Candle>();
+    }
+
+    public async Task<List<Candle>> GetCandlesAsync(DateTime start, DateTime end)
+    {
+        return await FetchCandles(start, end);
     }
   }
 }

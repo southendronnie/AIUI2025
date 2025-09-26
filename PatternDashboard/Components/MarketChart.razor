@@ -3,26 +3,67 @@
 @inject PatternService PatternService
 @inject IJSRuntime JS
 @inject TickService TickService
+@using System.Threading
+@implements IDisposable
 
 <canvas id="tickChart" hidden="hidden" width="800" height="400"></canvas>
 
-
 <div id="chartContainer" style="height: 400px; min-width: 310px"></div>
+
+<div class="mb-2">
+    <button @onclick="ZoomIn">Zoom In</button>
+    <button @onclick="ZoomOut">Zoom Out</button>
+</div>
+
+<div class="mb-2">
+    <span>Range: @windowStart.ToString("g") - @windowEnd.ToString("g")</span>
+</div>
 
 @code {
     private List<PriceTick> ticks = new();
+    private Timer? refreshTimer;
+    private bool isFirstRender = true;
+
+    // Track the current time window for the chart
+    private DateTime windowStart;
+    private DateTime windowEnd;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
+        if (isFirstRender)
+        {
+            isFirstRender = false;
+            await InitializeWindowAsync();
+            await RefreshChartAsync();
+            refreshTimer = new Timer(_ =>
+{
+    InvokeAsync(async () =>
+    {
+        await RefreshChartAsync();
+        StateHasChanged();
+    });
+}, null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(60));
+        }
+    }
 
-        var start = new DateTime(2025, 9, 15, 9, 0, 0);
-        var end = new DateTime(2025, 9, 16, 11, 0, 0);
-
+    private async Task InitializeWindowAsync()
+    {
         var candles = await MarketData.GetLatestActiveWindowAsync();
-        var hits = PatternService.ExtractPatterns(candles); // ← this defines hits
+        if (candles.Count > 0)
+        {
+            windowStart = candles[0].Time;
+            windowEnd = candles[^1].Time;
+        }
+    }
 
-        var chartData = candles.Select(c => new object[]
+    private async Task RefreshChartAsync()
+    {
+        var candles = await MarketData.GetCandlesAsync(windowStart, windowEnd);
+        // Filter candles to current window
+        var filteredCandles = candles.Where(c => c.Time >= windowStart && c.Time <= windowEnd).ToList();
+        var hits = PatternService.ExtractPatterns(filteredCandles);
+
+        var chartData = filteredCandles.Select(c => new object[]
         {
             DateTimeToUnix(c.Time),
             c.Open, c.High, c.Low, c.Close
@@ -31,7 +72,7 @@
         var patternPoints = hits.Select(h => new
         {
             x = DateTimeToUnix(h.Time),
-            y = candles.FirstOrDefault(c => c.Time == h.Time)?.Close ?? 0,
+            y = filteredCandles.FirstOrDefault(c => c.Time == h.Time)?.Close ?? 0,
             label = h.Type,
             confidence = (int)(h.Confidence * 100)
         }).ToArray();
@@ -40,20 +81,53 @@
 
         try
         {
-            ticks = await TickService.GetTicksAsync(candles[0].Time, candles.Last().Time);
+            ticks = await TickService.GetTicksAsync(windowStart, windowEnd);
             await JS.InvokeVoidAsync("renderTickChart", ticks.Select(t => new
             {
-                time = t.Time.ToLocalTime().ToString("HH:mm:ss"),
+
+                time = t.LocalTime.ToString("HH:mm:ss"),
+ //               time = t.Time.ToLocalTime().ToString("HH:mm:ss"),
                 mid = (double)t.Mid
             }));
-
         }
         catch (Exception)
         {
-            
+            // Handle exceptions as needed
         }
+    }
+
+    private async Task ZoomIn()
+    {
+        var range = windowEnd - windowStart;
+        var mid = windowStart + TimeSpan.FromTicks(range.Ticks / 2);
+        var newRange = TimeSpan.FromTicks(range.Ticks / 2);
+
+        windowStart = mid - TimeSpan.FromTicks(newRange.Ticks / 2);
+        windowEnd = mid + TimeSpan.FromTicks(newRange.Ticks / 2);
+
+        await RefreshChartAsync();
+        StateHasChanged();
+    }
+
+    private async Task ZoomOut()
+    {
+        var range = windowEnd - windowStart;
+        var mid = windowStart + TimeSpan.FromTicks(range.Ticks / 2);
+        var newRange = TimeSpan.FromTicks(range.Ticks * 2);
+
+        windowStart = mid - TimeSpan.FromTicks(newRange.Ticks / 2);
+        windowEnd = mid + TimeSpan.FromTicks(newRange.Ticks / 2);
+
+        await RefreshChartAsync();
+        StateHasChanged();
     }
 
     private long DateTimeToUnix(DateTime dt) =>
         new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
 }
+

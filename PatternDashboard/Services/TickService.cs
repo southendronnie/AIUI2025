@@ -26,4 +26,7 @@ public class PriceTick
   public decimal Ask { get; set; }
 
   public decimal Mid => (Bid + Ask) / 2;
+
+  // Returns the local time representation of Time
+  public DateTime LocalTime => Time.ToLocalTime();
 }
