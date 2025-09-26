@@ -4,7 +4,7 @@ public class ScoredPattern
   public DateTime Time { get; set; }                 // Timestamp of pattern
   public string Type { get; set; } = "";             // e.g. Bullish Engulfing
   public string Direction { get; set; } = "";        // Buy or Sell
-  public string TimeFrame { get; set; } = "5m";      // Detection frame
+  public string TimeFrame { get; set; } = "1m";      // Detection frame
   public double Confidence { get; set; }             // Raw confidence score
   public double Score { get; set; }                  // Final weighted score
   public StrategyConfig Config { get; set; } = new(); // Strategy context

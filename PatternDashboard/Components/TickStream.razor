@@ -14,12 +14,21 @@ else if (ticks.Count == 0)
 else
 {
     <ul class="tick-list">
-        @foreach (var tick in ticks.TakeLast(10).Reverse())
+        @foreach (var item in ticks.TakeLast(10).Reverse().Select((tick, idx) => new { tick, idx }))
         {
-            <li>
-                <strong>@tick.Time.ToLocalTime()</strong> —
-                Bid: @tick.Bid.ToString("F5"),
-                Ask: @tick.Ask.ToString("F5")
+            var color = "black";
+            if (item.idx < ticks.TakeLast(10).Count() - 1)
+            {
+                var prev = ticks.TakeLast(10).Reverse().ElementAt(item.idx + 1);
+                if (item.tick.Mid > prev.Mid)
+                    color = "green";
+                else if (item.tick.Mid < prev.Mid)
+                    color = "red";
+            }
+            <li style="color:@color">
+                <strong>@item.tick.Time.ToLocalTime()</strong> —
+                Bid: @item.tick.Bid.ToString("F5"),
+                Ask: @item.tick.Ask.ToString("F5")
             </li>
         }
     </ul>

@@ -13,11 +13,21 @@
 <div class="mb-2">
     <button @onclick="ZoomIn">Zoom In</button>
     <button @onclick="ZoomOut">Zoom Out</button>
+    <button @onclick="PanLeft">Pan Left</button>
+    <button @onclick="PanRight">Pan Right</button>
+    <button @onclick="ResetZoom">Reset Zoom</button>
 </div>
 
 <div class="mb-2">
     <span>Range: @windowStart.ToString("g") - @windowEnd.ToString("g")</span>
+    <span style="margin-left:1em;">(@(windowEnd - windowStart))</span>
+    @if (IsFollowingLatest)
+    {
+        <span style="color: green; font-weight: bold; margin-left: 1em;">(Following Live Data)</span>
+    }
 </div>
+
+<div>@(isUpdating ? "Loading..." : "")</div>
 
 @code {
     private List<PriceTick> ticks = new();
@@ -27,6 +37,13 @@
     // Track the current time window for the chart
     private DateTime windowStart;
     private DateTime windowEnd;
+
+    // FIX: Add missing isUpdating field
+    private bool isUpdating = false;
+
+    // Store initial window for reset
+    private DateTime initialWindowStart;
+    private DateTime initialWindowEnd;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -53,6 +70,8 @@
         {
             windowStart = candles[0].Time;
             windowEnd = candles[^1].Time;
+            initialWindowStart = windowStart;
+            initialWindowEnd = windowEnd;
         }
     }
 
@@ -94,10 +113,15 @@
         {
             // Handle exceptions as needed
         }
+
+        StateHasChanged(); // Ensure UI updates for indicator
     }
 
     private async Task ZoomIn()
     {
+        if (isUpdating) return;
+        isUpdating = true;
+
         var range = windowEnd - windowStart;
         var mid = windowStart + TimeSpan.FromTicks(range.Ticks / 2);
         var newRange = TimeSpan.FromTicks(range.Ticks / 2);
@@ -107,10 +131,14 @@
 
         await RefreshChartAsync();
         StateHasChanged();
+        isUpdating = false;
     }
 
     private async Task ZoomOut()
     {
+        if (isUpdating) return;
+        isUpdating = true;
+
         var range = windowEnd - windowStart;
         var mid = windowStart + TimeSpan.FromTicks(range.Ticks / 2);
         var newRange = TimeSpan.FromTicks(range.Ticks * 2);
@@ -120,6 +148,52 @@
 
         await RefreshChartAsync();
         StateHasChanged();
+        isUpdating = false;
+    }
+
+    private async Task PanLeft()
+    {
+        if (isUpdating) return;
+        isUpdating = true;
+
+        var range = windowEnd - windowStart;
+        var shift = TimeSpan.FromTicks(range.Ticks / 4);
+
+        windowStart = windowStart - shift;
+        windowEnd = windowStart + range;
+
+        await RefreshChartAsync();
+        StateHasChanged();
+        isUpdating = false;
+    }
+
+    private async Task PanRight()
+    {
+        if (isUpdating) return;
+        isUpdating = true;
+
+        var range = windowEnd - windowStart;
+        var shift = TimeSpan.FromTicks(range.Ticks / 4);
+
+        windowStart = windowStart + shift;
+        windowEnd = windowStart + range;
+
+        await RefreshChartAsync();
+        StateHasChanged();
+        isUpdating = false;
+    }
+
+    private async Task ResetZoom()
+    {
+        if (isUpdating) return;
+        isUpdating = true;
+
+        windowStart = initialWindowStart;
+        windowEnd = initialWindowEnd;
+
+        await RefreshChartAsync();
+        StateHasChanged();
+        isUpdating = false;
     }
 
     private long DateTimeToUnix(DateTime dt) =>
@@ -129,5 +203,10 @@
     {
         refreshTimer?.Dispose();
     }
+
+    private bool IsFollowingLatest =>
+        (DateTime.UtcNow - windowEnd).TotalMinutes < 3;
 }
+
+
 
