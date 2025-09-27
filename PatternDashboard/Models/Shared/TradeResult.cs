@@ -1,0 +1,10 @@
+﻿public class TradeResult
+{
+  public DateTime EntryTime { get; set; }
+  public DateTime ExitTime { get; set; }
+  public decimal EntryPrice { get; set; }  // ✅ Add this
+  public decimal ExitPrice { get; set; }   // ✅ Add this
+  public decimal RawPnL { get; set; }
+  public decimal NetPnL { get; set; }
+  public decimal Cost { get; set; }
+}

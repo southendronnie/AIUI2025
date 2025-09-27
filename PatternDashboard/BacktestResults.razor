@@ -20,13 +20,13 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Time</th>
-                <th>Pattern</th>
-                <th>Direction</th>
-                <th>Entry</th>
-                <th>Exit</th>
-                <th>Outcome</th>
-                <th>Profit</th>
+                <th>Entry Time</th>
+                <th>Exit Time</th>
+                <th>Entry Price</th>
+                <th>Exit Price</th>
+                <th>Raw PnL</th>
+                <th>Net PnL</th>
+                <th>Cost</th>
                 <th>Duration</th>
             </tr>
         </thead>
@@ -34,14 +34,14 @@ else
             @foreach (var trade in result.Trades)
             {
                 <tr>
-                    <td>@trade.Time.ToString("g")</td>
-                    <td>@trade.PatternType</td>
-                    <td>@trade.Direction</td>
-                    <td>@trade.Entry</td>
-                    <td>@trade.Exit</td>
-                    <td>@trade.Outcome</td>
-                    <td>@($"{trade.Profit:F2}")</td>
-                    <td>@trade.Duration</td>
+                    <td>@trade.EntryTime.ToString("g")</td>
+                    <td>@trade.ExitTime.ToString("g")</td>
+                    <td>@trade.EntryPrice</td>
+                    <td>@trade.ExitPrice</td>
+                    <td>@($"{trade.RawPnL:F2}")</td>
+                    <td>@($"{trade.NetPnL:F2}")</td>
+                    <td>@($"{trade.Cost:F2}")</td>
+                    <td>@((trade.ExitTime - trade.EntryTime).ToString())</td>
                 </tr>
             }
         </tbody>
