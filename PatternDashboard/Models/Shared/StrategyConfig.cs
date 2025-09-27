@@ -1,23 +1,10 @@
-
 public class StrategyConfig
 {
-  public Dictionary<string, double> PatternWeights { get; set; } = new()
-    {
-        { "Bullish Engulfing", 1.00 },
-        { "Bearish Engulfing", 0.95 },
-        { "Pin Bar", 0.92 },
-        { "Inside Bar", 0.90 }
-    };
-
-  public Dictionary<string, double> TimeFrameWeights { get; set; } = new()
-    {
-        { "5m", 1.00 },
-        { "15m", 1.05 },
-        { "1m", 1.10 }
-    };
-
-  public double StopLossPips { get; set; } = 20;
-  public double TakeProfitPips { get; set; } = 40;
-
-  public int MaxLookahead { get; set; } = 10; // 👈 This is the missing property
+    public int StopLossPips { get; set; }
+    public int TakeProfitPips { get; set; }
+    public decimal PipSize { get; set; }
+    public string Timeframe { get; set; } // e.g. "1m", "5m", "1h"
+    public decimal SpreadCost { get; set; } // in pips
+    public decimal CommissionPerTrade { get; set; } // fixed cost
+    public decimal SlippagePips { get; set; } // optional realism
 }
