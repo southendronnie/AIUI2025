@@ -13,7 +13,7 @@ public class StrategyConfig
     {
         { "5m", 1.00 },
         { "15m", 1.05 },
-        { "1h", 1.10 }
+        { "1m", 1.10 }
     };
 
   public double StopLossPips { get; set; } = 20;
