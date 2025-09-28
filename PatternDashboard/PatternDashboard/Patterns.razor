@@ -1,6 +1,5 @@
 ﻿@using AIUI2025.Services
 @inject MarketDataService MarketData
-@inject PatternService PatternService
 @inject IJSRuntime JS
 <div class="pattern-list">
     <h3>📈 Detected Patterns</h3>
@@ -49,8 +48,7 @@
         var end = new DateTime(2025, 9, 16, 11, 0, 0);
 
         var candles = await MarketData.GetLatestActiveWindowAsync();
-        hits = PatternService.ExtractPatterns(candles);
-        summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
+        //summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
     }
     private string GetPatternClass(string type) =>
         type.Contains("Bullish") ? "bullish-row" : "bearish-row";

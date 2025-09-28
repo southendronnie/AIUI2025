@@ -1,6 +1,4 @@
-﻿@inject PatternService PatternService
-
-
+﻿
 @if (patterns == null)
 {
     <p>Loading...</p>
@@ -43,8 +41,8 @@ else
         var start = now.AddMinutes(-30);
         var end = now;
 
-        PatternService patternService = PatternService;
-        patterns = await patternService.GetScoredPatternsAsync(start, end);
+//        PatternService patternService = PatternService;
+//        patterns = await patternService.GetScoredPatternsAsync(start, end);
     }
 
     private string GetRowClass(string type) =>

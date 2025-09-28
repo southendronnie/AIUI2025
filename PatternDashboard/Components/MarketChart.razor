@@ -1,6 +1,5 @@
 @using AIUI2025.Services
 @inject MarketDataService MarketData
-@inject PatternService PatternService
 @inject IJSRuntime JS
 @inject TickService TickService
 @using System.Threading
@@ -80,7 +79,7 @@
         var candles = await MarketData.GetCandlesAsync(windowStart, windowEnd);
         // Filter candles to current window
         var filteredCandles = candles.Where(c => c.Time >= windowStart && c.Time <= windowEnd).ToList();
-        var hits = PatternService.ExtractPatterns(filteredCandles);
+        var signals = SignalService.ExtractSignals(candles, new StrategyConfig());
 
         var chartData = filteredCandles.Select(c => new object[]
         {
@@ -88,7 +87,7 @@
             c.Open, c.High, c.Low, c.Close
         }).ToArray();
 
-        var patternPoints = hits.Select(h => new
+        var patternPoints = signals.Select(h => new
         {
             x = DateTimeToUnix(h.Time),
             y = filteredCandles.FirstOrDefault(c => c.Time == h.Time)?.Close ?? 0,

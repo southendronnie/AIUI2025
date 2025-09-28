@@ -21,7 +21,6 @@ builder.Services.AddSingleton<WeatherForecastService>();
 
 builder.Services.AddHttpClient<MarketDataService>();
 builder.Services.AddScoped<CandleBuilder>();
-builder.Services.AddSingleton<PatternService>();
 builder.Services.AddSingleton<TickService>();
 
 var app = builder.Build();
