@@ -1,8 +1,7 @@
 public class StrategyConfig
 {
   public string Instrument { get; set; } = "GBP_USD";
-  public string Granularity { get; set; } = "M15";
-  public string Timeframe { get; set; } = "M15";
+  public string Granularity { get; set; } = "M1";
 
   // Use int for pip counts
   public int StopLossPips { get; set; } = 20;
@@ -12,8 +11,8 @@ public class StrategyConfig
 
   // Use decimal for price-related values
   public decimal PipSize { get; set; } = 0.0001m;
-  public decimal SpreadCost { get; set; } = 0.5m;
-  public decimal CommissionPerTrade { get; set; } = 0.1m;
+  public decimal SpreadCost { get; set; } = 1.0m;
+  public decimal CommissionPerTrade { get; set; } = 0.0m;
   public decimal SlippagePips { get; set; } = 1m;
 
 }

@@ -62,6 +62,16 @@
                             </div>
 
                             <div class="mb-3">
+                                <label>Instrument</label>
+                                <InputText @bind-Value="request.Config.Instrument" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Granularity</label>
+                                <InputText @bind-Value="request.Config.Granularity" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
                                 <label>Stop Loss (pips)</label>
                                 <InputNumber @bind-Value="request.Config.StopLossPips" class="form-control" />
                             </div>
@@ -69,6 +79,36 @@
                             <div class="mb-3">
                                 <label>Take Profit (pips)</label>
                                 <InputNumber @bind-Value="request.Config.TakeProfitPips" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Max Lookahead</label>
+                                <InputNumber @bind-Value="request.Config.MaxLookahead" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Mode</label>
+                                <InputNumber @bind-Value="request.Config.Mode" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Pip Size</label>
+                                <InputNumber @bind-Value="request.Config.PipSize" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Spread Cost</label>
+                                <InputNumber @bind-Value="request.Config.SpreadCost" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Commission Per Trade</label>
+                                <InputNumber @bind-Value="request.Config.CommissionPerTrade" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Slippage (pips)</label>
+                                <InputNumber @bind-Value="request.Config.SlippagePips" class="form-control" />
                             </div>
 
                             <button type="submit" class="btn btn-primary">Run Backtest</button>
