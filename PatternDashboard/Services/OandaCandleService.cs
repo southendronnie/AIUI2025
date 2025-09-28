@@ -9,7 +9,7 @@ public class OandaCandleService
     _logger = logger;
   }
 
-  public void ParseCandleJson(string json, string timeframe = "1m")
+  public void ParseCandleJson(string json, string timeframe = "M1")
   {
     try
     {
