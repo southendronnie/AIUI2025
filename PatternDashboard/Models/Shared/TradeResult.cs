@@ -7,4 +7,6 @@
   public decimal RawPnL { get; set; }
   public decimal NetPnL { get; set; }
   public decimal Cost { get; set; }
+  public string Signal { get; set; } = string.Empty;
+  public string Direction { get; set; } = string.Empty;
 }

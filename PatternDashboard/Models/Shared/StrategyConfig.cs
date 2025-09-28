@@ -1,20 +1,25 @@
 public class StrategyConfig
 {
-    public string Instrument { get; set; }    = "GBP_USD";
-  public string Granularity { get; set; } = "M1";
-  public int StopLossPips { get; set; } = 20;
-  public int TakeProfitPips { get; set; } =40;
-  public decimal PipSize { get; set; } = 0.0001M;
-  public decimal SpreadCost { get; set; } // in pips
-  public decimal CommissionPerTrade { get; set; } // fixed cost
-  public decimal SlippagePips { get; set; } // optional realism
-  public int MaxLookahead { get; set; } = 10;
-  public StrategyMode Mode { get; set; }
-}
+  public string Instrument { get; set; } = "GBP_USD";
+  public string Granularity { get; set; } = "M15";
+  public string Timeframe { get; set; } = "M15";
 
-public enum StrategyMode
+  // Use int for pip counts
+  public int StopLossPips { get; set; } = 20;
+  public int TakeProfitPips { get; set; } = 40;
+  public int MaxLookahead { get; set; } = 10;
+  public int Mode { get; set; } = 1;
+
+  // Use decimal for price-related values
+  public decimal PipSize { get; set; } = 0.0001m;
+  public decimal SpreadCost { get; set; } = 0.5m;
+  public decimal CommissionPerTrade { get; set; } = 0.1m;
+  public decimal SlippagePips { get; set; } = 1m;
+
+}
+public enum StrategyMode: int
 {
-    SlTp,
-    PatternBased
+  SlTp,
+  PatternBased
 }
 

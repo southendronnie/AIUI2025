@@ -12,8 +12,8 @@ else
         <p><strong>Wins:</strong> @result.Wins</p>
         <p><strong>Losses:</strong> @result.Losses</p>
         <p><strong>Win Rate:</strong> @($"{result.WinRate:P2}")</p>
-        <p><strong>Total Profit:</strong> @($"{result.TotalProfit:F2}")</p>
-        <p><strong>Max Drawdown:</strong> @($"{result.MaxDrawdown:F2}")</p>
+        <p><strong>Total Profit:</strong> @($"{result.TotalProfit}")</p>
+        <p><strong>Max Drawdown:</strong> @($"{result.MaxDrawdown}")</p>
     </div>
 
     <h4>Trade History</h4>
@@ -38,9 +38,9 @@ else
                     <td>@trade.ExitTime.ToString("g")</td>
                     <td>@trade.EntryPrice</td>
                     <td>@trade.ExitPrice</td>
-                    <td>@($"{trade.RawPnL:F2}")</td>
-                    <td>@($"{trade.NetPnL:F2}")</td>
-                    <td>@($"{trade.Cost:F2}")</td>
+                    <td>@($"{trade.RawPnL}")</td>
+                    <td>@($"{trade.NetPnL}")</td>
+                    <td>@($"{trade.Cost}")</td>
                     <td>@((trade.ExitTime - trade.EntryTime).ToString())</td>
                 </tr>
             }
