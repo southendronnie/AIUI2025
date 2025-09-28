@@ -3,15 +3,16 @@
   public DateTime Time { get; set; }
   public PatternType Pattern { get; set; }
   public string Direction { get; set; }
+  public double Confidence { get; set; }
 
-  // Optional extras for UI
+  // UI-friendly aliases
   public string Type => Pattern.ToString();
-  public double Confidence { get; set; } = 1.0; // Default to 100% confidence'
 
-  public SignalResult(DateTime time, PatternType pattern, string direction)
+  public SignalResult(DateTime time, PatternType pattern, string direction, double confidence = 1.0)
   {
     Time = time;
     Pattern = pattern;
     Direction = direction;
+    Confidence = confidence;
   }
 }
