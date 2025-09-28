@@ -24,8 +24,7 @@ public static class SignalService
       if (curr.Close > sma) return null;
 
     var range = curr.High - curr.Low;
-    var avgRange = candles.Skip(index - 10).Take(10).Average(c => c.High - c.Low);
-    if (range < avgRange * 0.8) // Use double for both operands
+    if (range < candles.Skip(index - 10).Take(10).Average(c => c.High - c.Low) * 0.8)
       return null; // skip low-volatility setups
 
     if (!StrategyPatternMap.ModeMap.TryGetValue(config.Mode, out var validPatterns))

@@ -61,7 +61,7 @@ using System.Threading.Tasks;
           scored.Add(new ScoredPattern
           {
             Time = candles[i].Time,
-            Pattern = pattern.Value,
+            //Pattern = pattern.Value,
             Confidence = 1.0 // Stub: always 100% for now
           });
         }
