@@ -11,4 +11,7 @@ public class BacktestResult
   public double TotalProfit => (double)Trades.Sum(t => t.NetPnL);
     public double MaxDrawdown { get; set; } = 0;
     public List<EquityPoint> EquityCurve { get; set; } = new();
-} 
+  public List<Candle> Candles { get; set; } = new(); // ✅ Add this
+  public decimal NetPnL { get; set; }
+
+}

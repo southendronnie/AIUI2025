@@ -137,8 +137,9 @@
         </div>
     </div>
 }
+
 @code {
-    private bool showBacktest = false;
+    public bool showBacktest { get; set; }
     public BacktestRequest request = new()
     {
         Start = Stat.WindowStart,
@@ -154,8 +155,16 @@
         //candles = result; // or however you're loading them
     }
 
+    private void ShowBacktestModal() => showBacktest = true;
+    private void HideBacktestModal() => Close();
 
     private BacktestResult? result = null;
+    public void Close()
+    {
+        showBacktest = false;
+        result = null;
+        StateHasChanged();
+    }
 
     private async Task RunBacktest()
     {
@@ -192,6 +201,4 @@
             Console.WriteLine($"💥 Exception during backtest: {ex.Message}");
         }
     }
-    private void ShowBacktestModal() => showBacktest = true;
-    private void HideBacktestModal() => showBacktest = false;
 }
