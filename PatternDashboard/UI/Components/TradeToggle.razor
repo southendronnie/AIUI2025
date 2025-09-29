@@ -1,0 +1,34 @@
+@inject HttpClient Http
+
+<h4>Live Trading Control</h4>
+
+<p>Status: <strong>@(isEnabled ? "🟢 ENABLED" : "🔴 DISABLED")</strong></p>
+
+<button class="btn btn-primary" @onclick="ToggleTrading">
+    @(isEnabled ? "Disable Trading" : "Enable Trading")
+</button>
+
+@code {
+    private bool isEnabled;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var status = await Http.GetFromJsonAsync<TradeStatus>("/api/trade/status");
+        isEnabled = status?.liveTrading ?? false;
+    }
+
+    private async Task ToggleTrading()
+    {
+        var newState = !isEnabled;
+        var response = await Http.PostAsync($"/api/trade/toggle?enable={newState.ToString().ToLower()}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            isEnabled = newState;
+        }
+    }
+
+    public class TradeStatus
+    {
+        public bool liveTrading { get; set; }
+    }
+}
