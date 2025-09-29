@@ -7,11 +7,11 @@ public class StrategyConfig
   public int StopLossPips { get; set; } = 20;
   public int TakeProfitPips { get; set; } = 40;
   public int MaxLookahead { get; set; } = 10;
-  public int Mode { get; set; } = 1;
+  public int Mode { get; set; } = 4;
 
   // Use decimal for price-related values
   public decimal PipSize { get; set; } = 0.0001m;
-  public decimal SpreadCost { get; set; } = 1.0m;
+  public decimal SpreadCost { get; set; } = 0.0m;
   public decimal CommissionPerTrade { get; set; } = 0.0m;
   public decimal SlippagePips { get; set; } = 1m;
 

@@ -1,0 +1,73 @@
+﻿
+<h3>Signal Overlay</h3>
+
+<select @bind="mode">
+    <option value="raw">Raw Patterns</option>
+    <option value="strategy">Strategy Signals</option>
+</select>
+
+@if (candles != null)
+{
+    <div class="chart-container">
+        @foreach (var candle in candles)
+        {
+            var signal = GetSignal(candle);
+
+            if (signal is SignalResult s)
+            {
+                <div class="marker" style="left:@GetX(s.Time)">
+                    <span title="@s.Type (@s.Direction) - Confidence: @s.Confidence">
+                        ●
+                    </span>
+                </div>
+            }
+            else if (signal is ScoredPattern p)
+            {
+                <div class="marker" style="left:@GetX(p.Time)">
+                    <span title="@p.Pattern.ToString() - Confidence: @p.Confidence">
+                        ○
+                    </span>
+                </div>
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public List<Candle> candles { get; set; }
+    [Parameter] public StrategyConfig config { get; set; }
+
+
+
+    private string mode = "strategy";
+    private List<SignalResult> strategySignals;
+    private List<ScoredPattern> rawPatterns;
+    protected override async Task OnParametersSetAsync()
+    {
+        if (candles == null || config == null)
+            return;
+
+        if (mode == "strategy")
+        {
+            strategySignals = SignalService.ExtractSignals(candles, config);
+        }
+        else
+        {
+            rawPatterns = await PatternService.GetScoredPatternsAsync(candles);
+        }
+    }
+
+    private object GetSignal(Candle candle)
+    {
+        if (mode == "strategy")
+            return strategySignals?.FirstOrDefault(s => s.Time == candle.Time);
+
+        return rawPatterns?.FirstOrDefault(p => p.Time == candle.Time);
+    }
+
+    private string GetX(DateTime time)
+    {
+        // Convert time to pixel offset (stub)
+        return $"{(time - candles[0].Time).TotalMinutes}px";
+    }
+}

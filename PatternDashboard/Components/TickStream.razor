@@ -59,7 +59,7 @@ else
     {
         while (!token.IsCancellationRequested)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.UtcNow.ToLocalTime(); ;
             var start = now.AddMinutes(-1);
             var end = now;
 

@@ -44,7 +44,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var now = DateTime.UtcNow;
+        var now = DateTime.UtcNow.ToLocalTime(); ;
         var start = now.AddMinutes(-10);
         var end = now;
 

@@ -1,5 +1,8 @@
 public class BacktestResult
 {
+  public Dictionary<string, int> SignalCounts { get; set; }
+  public Dictionary<string, decimal> AvgPnLByPattern { get; set; }
+  public string MostCommonSignal { get; set; }
     public List<TradeResult> Trades { get; set; } = new();
     public int TotalTrades => Trades.Count;
     public int Wins => Trades.Count(t => t.NetPnL > 0);

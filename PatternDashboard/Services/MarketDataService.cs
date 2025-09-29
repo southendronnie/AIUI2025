@@ -19,7 +19,7 @@ namespace AIUI2025.Services
 
     public async Task<List<Candle>> GetLatestActiveWindowAsync( )
     {
-      var now = DateTime.UtcNow;
+      var now = DateTime.Now.ToLocalTime(); ;
       var scanStart = now;
       var scanStep = TimeSpan.FromMinutes(15);
       var windowSize = TimeSpan.FromMinutes(30);
@@ -32,10 +32,11 @@ namespace AIUI2025.Services
 
         var candles = await GetCandlesAsync(windowStart, windowEnd);
 
-        bool hasRecentActivity = candles.Any(c => c.Time >= windowEnd.AddMinutes(-13));
+        bool hasRecentActivity = candles.Any(c => c.Time >= windowEnd.AddMinutes(-30));
 
         if (hasRecentActivity)
           return candles;
+        scanStep*=2;
       }
 
       return new List<Candle>(); // No activity found in lookback window

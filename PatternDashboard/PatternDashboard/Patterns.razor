@@ -48,7 +48,7 @@
         var end = new DateTime(2025, 9, 16, 11, 0, 0);
 
         var candles = await MarketData.GetLatestActiveWindowAsync();
-        //summary = PatternService.GetSummary(hits, TimeSpan.FromMinutes(30));
+        summary = PatternService.GetSummary(candles);
     }
     private string GetPatternClass(string type) =>
         type.Contains("Bullish") ? "bullish-row" : "bearish-row";

@@ -1,33 +1,45 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-  public static class PatternService
+public class PatternService : IPatternService
+{
+  public static bool IsBullishEngulfing(Candle prev, Candle curr)
   {
-    public static PatternType? DetectPattern(Candle prev, Candle curr)
-    {
-      // Basic Engulfing logic
-      if (prev.Close < prev.Open && curr.Close > curr.Open && curr.Close > prev.Open && curr.Open < prev.Close)
-        return PatternType.BullishEngulfing;
+    return prev.Close < prev.Open &&
+           curr.Close > curr.Open &&
+           curr.Close > prev.Open &&
+           curr.Open < prev.Close;
+  }
 
-      if (prev.Close > prev.Open && curr.Close < curr.Open && curr.Close < prev.Open && curr.Open > prev.Close)
-        return PatternType.BearishEngulfing;
+  public static bool IsBearishEngulfing(Candle prev, Candle curr)
+  {
+    return prev.Close > prev.Open &&
+           curr.Close < curr.Open &&
+           curr.Close < prev.Open &&
+           curr.Open > prev.Close;
+  }
 
-      // Basic Pin Bar logic
-      var bodySize = Math.Abs(curr.Close - curr.Open);
-      var candleRange = curr.High - curr.Low;
-      var upperWick = curr.High - Math.Max(curr.Close, curr.Open);
-      var lowerWick = Math.Min(curr.Close, curr.Open) - curr.Low;
+  public static bool IsPinBar(Candle candle, decimal threshold = 0.66m)
+  {
+    var body = Math.Abs((decimal)(candle.Close - candle.Open));
+    var range = (decimal)(candle.High - candle.Low);
+    var tail = Math.Min((decimal)(candle.Open - candle.Low), (decimal)(candle.Close - candle.Low));
+    var wick = Math.Min((decimal)(candle.High - candle.Open), (decimal)(candle.High - candle.Close));
 
-      if (bodySize < candleRange * 0.3)
-      {
-        if (lowerWick > upperWick * 2)
-          return PatternType.BullishPinBar;
+    if (range == 0) return false;
 
-        if (upperWick > lowerWick * 2)
-          return PatternType.BearishPinBar;
-      }
+    return (tail / range > threshold || wick / range > threshold) && body / range < (1 - threshold);
+  }
 
+  public static bool IsInsideBar(Candle prev, Candle curr)
+  {
+    return curr.High < prev.High && curr.Low > prev.Low;
+  }
+
+  public static PatternType? DetectPattern(Candle prev, Candle curr)
+  {
+    if (IsBullishEngulfing(prev, curr)) return PatternType.BullishEngulfing;
+    if (IsBearishEngulfing(prev, curr)) return PatternType.BearishEngulfing;
+    if (IsInsideBar(prev, curr)) return PatternType.BullishPinBar;
+    if (IsPinBar(curr)) return PatternType.BearishPinBar;
       return null;
     }
 

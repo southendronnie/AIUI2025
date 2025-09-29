@@ -8,4 +8,8 @@ public class ScoredPattern
   public double Score { get; set; }                  // Final weighted score
   public StrategyConfig Config { get; set; } = new(); // Strategy context
   public List<Candle> FutureCandles { get; set; } = new(); // Injected for simulation
+
+
+    // Optional alias for Razor
+    public string Pattern => Type.ToString();
 }

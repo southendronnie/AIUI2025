@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\OandaCandleService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Pages\Patterns.razor" />
     <Content Remove="PatternDashboard\PatternDashboard.razor" />
     <Content Remove="PatternOverlyay.razor" />

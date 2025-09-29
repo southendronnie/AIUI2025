@@ -76,6 +76,9 @@
 
     private async Task RefreshChartAsync()
     {
+        Stat.WindowStart = windowStart;
+        Stat.WindowEnd = windowEnd;
+
         var candles = await MarketData.GetCandlesAsync(windowStart, windowEnd);
         // Filter candles to current window
         var filteredCandles = candles.Where(c => c.Time >= windowStart && c.Time <= windowEnd).ToList();
@@ -204,7 +207,7 @@
     }
 
     private bool IsFollowingLatest =>
-        (DateTime.UtcNow - windowEnd).TotalMinutes < 3;
+        (DateTime.UtcNow.ToLocalTime() - windowEnd).TotalMinutes< 3;
 }
 
 
