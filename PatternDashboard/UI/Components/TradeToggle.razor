@@ -13,14 +13,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var status = await Http.GetFromJsonAsync<TradeStatus>("/api/trade/status");
+        var status = await Http.GetFromJsonAsync<TradeStatus>($"{Stat.Url}/trade/status");
         isEnabled = status?.liveTrading ?? false;
     }
 
     private async Task ToggleTrading()
     {
         var newState = !isEnabled;
-        var response = await Http.PostAsync($"/api/trade/toggle?enable={newState.ToString().ToLower()}", null);
+        var response = await Http.PostAsync($"{Stat.Url}/trade/toggle?enable={newState.ToString().ToLower()}", null);
         if (response.IsSuccessStatusCode)
         {
             isEnabled = newState;
