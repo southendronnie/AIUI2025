@@ -1,0 +1,55 @@
+@inject HttpClient Http
+
+<h4>Trade Diagnostics</h4>
+
+@if (logs == null)
+{
+    <p>Loading trade logs…</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Instrument</th>
+                <th>Direction</th>
+                <th>Pattern</th>
+                <th>PnL</th>
+                <th>Win</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in logs)
+            {
+                <tr>
+                    <td>@log.Time.ToString("u")</td>
+                    <td>@log.Instrument</td>
+                    <td>@log.Direction</td>
+                    <td>@log.Pattern</td>
+                    <td>@log.PnL.ToString("F2")</td>
+                    <td>@(log.IsWin ? "✅" : "❌")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TradeLogEntry> logs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        logs = await Http.GetFromJsonAsync<List<TradeLogEntry>>($"{Stat.Url}/trade/logs");
+    }
+
+    public class TradeLogEntry
+    {
+        public DateTime Time { get; set; }
+        public string Instrument { get; set; }
+        public string Direction { get; set; }
+        public string Pattern { get; set; }
+        public decimal PnL { get; set; }
+        public bool IsWin { get; set; }
+    }
+}

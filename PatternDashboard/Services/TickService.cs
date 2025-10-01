@@ -14,7 +14,7 @@ public class TickService
 
   public async Task<List<PriceTick>> GetTicksAsync(DateTime start, DateTime end)
   {
-    var url = $"{_marketDataUrl}/ticks?start={start:s}&end={end:s}";
+    var url = $"{_marketDataUrl}/ticks?start={start:u}&end={end:u}";
     return await _http.GetFromJsonAsync<List<PriceTick>>(url) ?? new();
   }
 }
