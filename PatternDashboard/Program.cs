@@ -6,10 +6,23 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Stat.Url = builder.Configuration.GetSection("ApiSettings").GetSection("MarketDataUrl").Value;
+// Read environment
+var environment = builder.Environment.EnvironmentName;
 
+// Get API settings from configuration
 builder.Services.Configure<ApiSettings>(
     builder.Configuration.GetSection("ApiSettings"));
+
+// Select URL based on environment
+Stat.Url  = environment == "DebugLocal"
+
+    ? builder.Configuration.GetSection("ApiSettings").GetSection("MarketDataUrlDebugLocal").Value
+
+    :  builder.Configuration.GetSection("ApiSettings").GetSection("MarketDataUrl").Value
+;
+
+// Register as a singleton or use as needed
+
 
 builder.Services.AddSingleton(resolver =>
     resolver.GetRequiredService<IOptions<ApiSettings>>().Value);
@@ -25,15 +38,17 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddHttpClient<MarketDataService>();
 builder.Services.AddScoped<CandleBuilder>();
 builder.Services.AddSingleton<TickService>();
-builder.Services.AddScoped<BacktestService>();
+//builder.Services.AddScoped<BacktestService>();
 builder.Services.AddScoped<ITradeSimulator, TradeSimulator>();
 
 builder.Services.AddScoped<ICandleRepository, CandleRepository>();
 builder.Services.AddScoped<IPatternService, PatternService>();
 
-builder.Services.AddScoped<CandleStore>(provider => new CandleStore(basePath));
+//builder.Services.AddScoped<CandleStore>(provider => new CandleStore(basePath));
 
-Stat.Oanda = new OandaCandleService(new CandleStore(basePath), accountId, token, isPractice);
+//Stat.Oanda = new OandaCandleService(new CandleStore(basePath), accountId, token, isPractice);
+
+//builder.WebHost.UseUrls("http://localhost:5001");
 
 var app = builder.Build();
 

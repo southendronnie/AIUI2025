@@ -8,6 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Shared\BacktestService.cs" />
+    <Compile Remove="Models\Shared\CandleStore.cs" />
+    <Compile Remove="Models\Shared\OandaCandleService.cs" />
     <Compile Remove="Services\OandaCandleService.cs" />
   </ItemGroup>
 

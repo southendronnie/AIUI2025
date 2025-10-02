@@ -40,7 +40,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        logs = await Http.GetFromJsonAsync<List<TradeLogEntry>>($"{Stat.Url}/trade/logs");
+       logs = await Http.GetFromJsonAsync<List<TradeLogEntry>>($"{Stat.Url}/trade/logs");
     }
 
     public class TradeLogEntry
