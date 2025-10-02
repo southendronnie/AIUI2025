@@ -80,6 +80,11 @@
         Stat.WindowEnd = windowEnd;
 
         var candles = await MarketData.GetCandlesAsync(windowStart, windowEnd);
+        windowStart = candles[0].Time;
+        windowEnd = candles[^1].Time;
+        if (windowEnd > initialWindowEnd) initialWindowEnd = windowEnd;
+        if (windowStart > initialWindowStart) initialWindowStart = windowStart;
+
         // Filter candles to current window
         var filteredCandles = candles.Where(c => c.Time >= windowStart && c.Time <= windowEnd).ToList();
         var signals = SignalService.ExtractSignals(candles, new StrategyConfig());

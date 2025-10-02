@@ -19,7 +19,7 @@ namespace AIUI2025.Services
 
     public async Task<List<Candle>> GetLatestActiveWindowAsync( )
     {
-      var now = DateTime.Now.ToLocalTime(); ;
+      var now = DateTime.UtcNow; ;
       var scanStart = now;
       var scanStep = TimeSpan.FromMinutes(15);
       var windowSize = TimeSpan.FromMinutes(30);
