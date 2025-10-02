@@ -1,58 +1,57 @@
-<h3>Signal Overlay</h3>
-<select @bind="mode">
-    <option value="raw">Raw Patterns</option>
-    <option value="strategy">Strategy Signals</option>
-</select>
+@inject HttpClient Http
 
-@if (candles != null)
+<h4>Signal Diagnostics Overlay</h4>
+
+@if (signals == null)
 {
-    <div class=""chart-container"">
-        @foreach (var candle in candles)
+    <p>Loading signals…</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Instrument</th>
+                <th>Pattern</th>
+                <th>Confidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in signals.OrderByDescending(s => s.Time))
+            {
+                <tr>
+                    <td>@s.Time.ToString("u")</td>
+                    <td>@s.Instrument</td>
+                    <td>@s.Type</td>
+                    <td>@s.Confidence.ToString("F2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h5>Signal Frequency</h5>
+    <ul>
+        @foreach (var group in signals.GroupBy(s => s.Type))
         {
-            var signal = GetSignal(candle);
-            if (signal is SignalResult s)
-            {
-                <div class="marker" style="left:@GetX(s.Time)">
-                    <span title=""@s.Type (@s.Direction) - Confidence: @s.Confidence">●</span>
-                </div>
-            }
-            else if (signal is ScoredPattern p)
-            {
-                <div class="marker" style="left:@GetX(p.Time)">
-                    <span title=""@p.Type.ToString() - Confidence: @p.Confidence">○</span>
-                </div>
-            }
+            <li>@group.Key: @group.Count()</li>
         }
-    </div>
+    </ul>
 }
 
 @code {
-    [Parameter] public List<Candle> candles { get; set; }
-    [Parameter] public StrategyConfig config { get; set; }
+    private List<SignalEntry> signals;
 
-    private string mode = "strategy";
-    private List<SignalResult> strategySignals;
-    private List<ScoredPattern> rawPatterns;
-
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
-        if (candles == null || config == null) return;
-
-        if (mode == "strategy")
-            strategySignals = SignalService.ExtractSignals(candles, config);
-        else
-            rawPatterns = await PatternService.GetScoredPatternsAsync(candles);
+        signals = await Http.GetFromJsonAsync<List<SignalEntry>>($"{Stat.Url}/signals/logs");
     }
 
-    private object GetSignal(Candle candle)
+    public class SignalEntry
     {
-        if (mode == "strategy")
-            return strategySignals?.FirstOrDefault(s => s.Time == candle.Time);
-        return rawPatterns?.FirstOrDefault(p => p.Time == candle.Time);
-    }
-
-    private string GetX(DateTime time)
-    {
-        return $"{(time - candles[0].Time).TotalMinutes}px";
+        public DateTime Time { get; set; }
+        public string Instrument { get; set; }
+        public string Type { get; set; }
+        public double Confidence { get; set; }
     }
 }

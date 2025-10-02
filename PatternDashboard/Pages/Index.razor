@@ -17,36 +17,31 @@
     Run Backtest
 </button>
 </div>
-<div class="dashboard-row">
-    <section class="panel narrow">
-        <PatternDashboard.Components.PatternDashboard />
-    </section>
-    <section class="panel narrow">
-        <PatternDashboard.Components.TickStream />
-    </section>
-</div>
+
 <div class="dashboard-row">
 <h2>Strategy Dashboard</h2>
-
-
     <section class="panel narrow">
-
         <PatternDashboard.Components.SignalOverlay candles="@candles" config="@request.Config" />
-
     </section>
     <section class="panel narrow">
             <PatternDashboard.Components.PatternOverlay />
     </section>
 </div>
 <div class="dashboard-row">
-
     <section class="panel narrow">
-
         <PatternDashboard.UI.Components.TradeDiagnostics />
-
     </section>
 </div>
+<div class="dashboard-row">
+    <section class="panel narrow">
+        <PatternDashboard.UI.Components.SignalOverlay />
 
+        @* <PatternDashboard.Components.PatternDashboard /> *@
+    </section>
+    <section class="panel narrow">
+        <PatternDashboard.Components.TickStream />
+    </section>
+</div>
 @if (showBacktest)
 {
      request.Start = Stat.WindowStart;
