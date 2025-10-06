@@ -45,7 +45,7 @@ namespace AIUI2025.Services
 
     private async Task<List<Candle>> FetchCandles(DateTime start, DateTime end)
     {
-      string baseUrl = $"{_marketDataUrl}/candles/1m";
+      string baseUrl = $"{_marketDataUrl}/candles/15m";
       string url = $"{baseUrl}?start={Uri.EscapeDataString(start.ToString("s"))}&end={Uri.EscapeDataString(end.ToString("s"))}";
       Debug.WriteLine($"{start} {end}");
 

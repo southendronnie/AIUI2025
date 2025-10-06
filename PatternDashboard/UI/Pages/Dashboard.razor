@@ -2,11 +2,11 @@
 @inject IBacktestService BacktestService
 
 <h2>Strategy Dashboard</h2>
-<SignalOverlay candles="@candles" config="@config" />
+<atternDashboard.Components.SignalOverlay candles="@candles" config="@config" />
 
 @code {
     private List<Candle> candles;
-    private StrategyConfig config = new StrategyConfig { Mode = 3, Instrument = "GBP_USD", Granularity = "M1" };
+    private StrategyConfig config = new StrategyConfig { Mode = 3, Instrument = "GBP_USD", Granularity = "M15" };
 
     protected override async Task OnInitializedAsync()
     {
