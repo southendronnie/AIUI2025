@@ -32,9 +32,3 @@ public class StrategyConfig
 
 }
 
-public enum StrategyMode: int
-{
-  SlTp,
-  PatternBased
-}
-
