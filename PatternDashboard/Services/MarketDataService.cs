@@ -22,7 +22,7 @@ namespace AIUI2025.Services
       var now = DateTime.UtcNow; ;
       var scanStart = now;
       var scanStep = TimeSpan.FromMinutes(15);
-      var windowSize = TimeSpan.FromMinutes(30);
+      var windowSize = TimeSpan.FromMinutes(1440);
       var maxLookback = TimeSpan.FromDays(5); // autonomy limit
 
       for (var offset = TimeSpan.Zero; offset <= maxLookback; offset += scanStep)
